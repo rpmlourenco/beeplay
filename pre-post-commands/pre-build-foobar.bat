@@ -1,0 +1,1 @@
+IF EXIST "%1..\Music Players\foobar2000\components\" ERASE /F /Q "%1..\Music Players\foobar2000\components\%2"

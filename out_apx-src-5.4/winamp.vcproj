@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectGUID="{25F1724B-BDB4-4735-8693-4566178105E2}"
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="winamp"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(ProjectName)\out"
+			IntermediateDirectory="$(ProjectName)\obj"
+			ConfigurationType="2"
+			CharacterSet="1"
+			ExcludeBuckets="5;6;8;10;13;14;15;16;18"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				Description="Deleting $(TargetFileName) from player directory..."
+				CommandLine="IF EXIST &quot;%ProgramFiles%\Winamp\Plugins\&quot; ERASE /F /Q &quot;%ProgramFiles%\Winamp\Plugins\$(TargetFileName)&quot;&#x0D;&#x0A;IF EXIST &quot;%ProgramFiles%\MusicBee\Plugins\&quot; ERASE /F /Q &quot;%ProgramFiles%\MusicBee\Plugins\$(TargetFileName)&quot;&#x0D;&#x0A;IF EXIST &quot;%ProgramFiles%\MediaMonkey\Plugins\&quot; ERASE /F /Q &quot;%ProgramFiles%\MediaMonkey\Plugins\$(TargetFileName)&quot;"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="$(ProjectName)\sdk;rsoutput\sdk"
+				PreprocessorDefinitions="NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				WarningLevel="4"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4100"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="ole32.lib oleaut32.lib shell32.lib user32.lib $(NOINHERIT)"
+				OutputFile="$(OutDir)\out_apx.dll"
+				LinkIncremental="1"
+				GenerateManifest="false"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Copying $(TargetFileName) to player directory..."
+				CommandLine="IF EXIST &quot;%ProgramFiles%\Winamp\Plugins\&quot; COPY /B /Y &quot;$(TargetPath)&quot; &quot;%ProgramFiles%\Winamp\Plugins\&quot;&#x0D;&#x0A;IF EXIST &quot;%ProgramFiles%\MusicBee\Plugins\&quot; COPY /B /Y &quot;$(TargetPath)&quot; &quot;%ProgramFiles%\MusicBee\Plugins\&quot;&#x0D;&#x0A;IF EXIST &quot;%ProgramFiles%\MediaMonkey\Plugins\&quot; COPY /B /Y &quot;$(TargetPath)&quot; &quot;%ProgramFiles%\MediaMonkey\Plugins\&quot;"
+			/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File
+			RelativePath="$(ProjectName)\src\Main.cpp"
+			>
+		</File>
+		<File
+			RelativePath="$(ProjectName)\src\Output.cpp"
+			>
+		</File>
+		<File
+			RelativePath="$(ProjectName)\src\Output.h"
+			>
+		</File>
+		<File
+			RelativePath="$(ProjectName)\src\Resources.h"
+			>
+		</File>
+		<File
+			RelativePath="$(ProjectName)\src\Resources.rc"
+			>
+		</File>
+		<File
+			RelativePath="$(ProjectName)\src\WinampHooks.cpp"
+			>
+		</File>
+		<File
+			RelativePath="$(ProjectName)\src\WinampHooks.h"
+			>
+		</File>
+		<File
+			RelativePath="$(ProjectName)\src\WinampPlayer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="$(ProjectName)\src\WinampPlayer.h"
+			>
+		</File>
+	</Files>
+</VisualStudioProject>

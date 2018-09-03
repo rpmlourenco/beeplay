@@ -1,0 +1,5 @@
+IF EXIST "%1..\Music Players\MusicBee\" ERASE /F /Q "%1..\Music Players\MusicBee\%2"
+IF EXIST "%1..\Music Players\Winamp\" ERASE /F /Q "%1..\Music Players\Winamp\%2"
+IF EXIST "%1..\Music Players\MediaMonkey\" ERASE /F /Q "%1..\Music Players\MediaMonkey\%2"
+IF EXIST "%1..\Music Players\foobar2000\" ERASE /F /Q "%1..\Music Players\foobar2000\%2"
+IF EXIST "%1..\Music Players\xmplay\Plugins\" ERASE /F /Q "%1..\Music Players\xmplay\Plugins\%2"

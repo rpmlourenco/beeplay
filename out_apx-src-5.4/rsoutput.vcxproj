@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0155CF28-9AB3-40C2-A9BF-8F2F245E52DB}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup>
+    <TargetName>apxCore</TargetName>
+    <IntDir>$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectName)\$(Configuration)\</OutDir>
+    <LinkIncremental>false</LinkIncremental>
+    <GenerateManifest>false</GenerateManifest>
+    <IncludePath>$(SolutionDir)\bonjour-3.0.0.10\include;$(SolutionDir)\libalac-1.0.4p1\LibALAC;$(SolutionDir)\libsamplerate-0.1.9\src;$(SolutionDir)\openssl-1.0.1j\include;$(SolutionDir)\poco-1.6.0\Foundation\include;$(SolutionDir)\poco-1.6.0\Net\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\libalac-1.0.4p1\$(Configuration);$(SolutionDir)\libsamplerate-0.1.9\out;$(SolutionDir)\openssl-1.0.1j\out32;$(SolutionDir)\poco-1.6.0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectName)\sdk;$(ProjectName)\src\core;$(ProjectName)\src\view</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NOMINMAX;POCO_NO_AUTOMATIC_LIBS;RSOUTPUT_EXPORTS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <Optimization>Disabled</Optimization>
+      <WarningLevel>Level4</WarningLevel>
+      <DisableSpecificWarnings>4100;4702</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>advapi32.lib;LibALAC32.lib;gdi32.lib;iphlpapi.lib;libeay32d.lib;PocoFoundationmtd.lib;PocoNetmtd.lib;samplerate32d.lib;user32.lib;ws2_32.lib</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)\pre-post-commands\post-build-rsoutput.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
+      <Message>Copying $(TargetFileName) to player directory...</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)\pre-post-commands\pre-build-rsoutput.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
+      <Message>Deleting $(TargetFileName) from player directory...</Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectName)\sdk;$(ProjectName)\src\core;$(ProjectName)\src\view</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NOMINMAX;POCO_NO_AUTOMATIC_LIBS;RSOUTPUT_EXPORTS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <Optimization>MaxSpeed</Optimization>
+      <WarningLevel>Level4</WarningLevel>
+      <DisableSpecificWarnings>4100;4702</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <StringPooling>true</StringPooling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>advapi32.lib;LibALAC32.lib;gdi32.lib;iphlpapi.lib;libeay32r.lib;PocoFoundationmt.lib;PocoNetmt.lib;samplerate32r.lib;user32.lib;ws2_32.lib</AdditionalDependencies>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)\pre-post-commands\post-build-rsoutput.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
+      <Message>Copying $(TargetFileName) to player directory...</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)\pre-post-commands\pre-build-rsoutput.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
+      <Message>Deleting $(TargetFileName) from player directory...</Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="$(ProjectName)\src\core\impl\Debugger.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\DeviceDiscovery.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\DeviceInfo.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\DeviceManager.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\DeviceUtils.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\Main.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\Options.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputBuffer.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputComponent.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputFormat.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputMetadata.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputReformatter.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\Platform.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\Plugin.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\RemoteControl.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\ServiceDiscovery.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\NTPTimestamp.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\PacketBuffer.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\RAOPDevice.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\RAOPEngine.cpp" />
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\RTSPClient.cpp" />
+    <ClCompile Include="$(ProjectName)\src\view\impl\ConnectDialog.cpp" />
+    <ClCompile Include="$(ProjectName)\src\view\impl\DeviceDialog.cpp" />
+    <ClCompile Include="$(ProjectName)\src\view\impl\Dialog.cpp" />
+    <ClCompile Include="$(ProjectName)\src\view\impl\MessageDialog.cpp" />
+    <ClCompile Include="$(ProjectName)\src\view\impl\OptionsDialog.cpp" />
+    <ClCompile Include="$(ProjectName)\src\view\impl\PasswordDialog.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(ProjectName)\sdk\Debugger.h" />
+    <ClInclude Include="$(ProjectName)\sdk\DeviceUtils.h" />
+    <ClInclude Include="$(ProjectName)\sdk\MessageDialog.h" />
+    <ClInclude Include="$(ProjectName)\sdk\OptionsDialog.h" />
+    <ClInclude Include="$(ProjectName)\sdk\OptionsUtils.h" />
+    <ClInclude Include="$(ProjectName)\sdk\OutputComponent.h" />
+    <ClInclude Include="$(ProjectName)\sdk\OutputFormat.h" />
+    <ClInclude Include="$(ProjectName)\sdk\OutputMetadata.h" />
+    <ClInclude Include="$(ProjectName)\sdk\Platform.h" />
+    <ClInclude Include="$(ProjectName)\sdk\Platform.inl" />
+    <ClInclude Include="$(ProjectName)\sdk\Player.h" />
+    <ClInclude Include="$(ProjectName)\sdk\Plugin.h" />
+    <ClInclude Include="$(ProjectName)\sdk\Uncopyable.h" />
+    <ClInclude Include="$(ProjectName)\src\core\DeviceDiscovery.h" />
+    <ClInclude Include="$(ProjectName)\src\core\DeviceInfo.h" />
+    <ClInclude Include="$(ProjectName)\src\core\DeviceNotification.h" />
+    <ClInclude Include="$(ProjectName)\src\core\NumberParser.h" />
+    <ClInclude Include="$(ProjectName)\src\core\Options.h" />
+    <ClInclude Include="$(ProjectName)\src\core\ServiceDiscovery.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\Device.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\DeviceManager.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\OutputBuffer.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\OutputObserver.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\OutputReformatter.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\OutputSink.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\RemoteControl.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\NTPTimestamp.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\PacketBuffer.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\Random.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\RAOPDefs.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\RAOPDevice.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\RAOPEngine.h" />
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\RTSPClient.h" />
+    <ClInclude Include="$(ProjectName)\src\view\ConnectDialog.h" />
+    <ClInclude Include="$(ProjectName)\src\view\PasswordDialog.h" />
+    <ClInclude Include="$(ProjectName)\src\view\impl\DeviceDialog.h" />
+    <ClInclude Include="$(ProjectName)\src\view\impl\Dialog.h" />
+    <ClInclude Include="$(ProjectName)\src\view\impl\Resources.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="$(ProjectName)\src\view\impl\Resources.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

@@ -1,0 +1,130 @@
+Remote Speakers Output Plug-In
+
+Copyright (c) 2006-2015  Eric Milles
+
+http://emilles.dyndns.org/software/out_apx.html
+
+
+
+COMMENTS
+--------
+Microsoft Visual Studio 2008: I have included my project files. The projects are
+set up to link in OpenSSL, Poco and SRC statically and Bonjour dynamically. You
+could modify the projects to link in everything dynamically if you have trouble
+building static libraries from the source distributions of OpenSSL, Poco and SRC.
+They were linked statically to keep the plug-in down to as few files as possible
+and to eliminate DLL version conflicts.
+
+Microsoft Visual Studio 2010+: I have also included my newer project files. They
+are set up somewhat differently from the VS2008 projects in that a supporting
+batch script exists so the location of libraries and the player executables can
+be changed quickly and easily. You can ignore any instructions below for copying
+files into the lib directory of the rsoutput project; modify the batch script to
+specify the directories where you extracted and built supporting libraries.
+
+With some small adjustments, the projects can be used with Visual Studio 2012,
+2013 or 2015. I've tested with each. Let me know if you need help adjusting them.
+
+The icon file(s) for remote speakers devices have been included so the solution
+will build.  However, the icons have been erased.  You can create custom device
+icons or import some.
+
+Note regarding Bonjour from Apple: The plug-in will run without Bonjour installed,
+but I highly recommended you install it for automatic discovery of remote speakers.
+
+
+
+PREREQUISITES
+-------------
+1) Apple Lossless Audio Codec (http://alac.macosforge.org/)
+
+	Create an empty text file named stdint.h in rsoutput\lib\alac\
+
+	Copy the contents of the codec directory to rsoutput\lib\alac\
+
+	Edit ag_enc.c, replacing all lines from "And on the subject of..." up to, but not including "#if PRAGMA_MARK" with "#define abs_func abs"
+
+
+2) Apple Bonjour for Windows SDK (http://www.apple.com/bonjour/)
+
+	Copy dns_sd.h to rsoutput\lib\bonjour\
+
+
+3) OpenSSL (http://www.openssl.org/)
+
+	(Full instructions can be found in INSTALL.W32)
+
+	Open Visual Studio x86 command prompt and cd to OpenSSL basedir
+
+	> perl Configure VC-WIN32
+
+	> ms\do_ms
+
+	Copy ms\nt.mak to nt_debug.mak, then edit:
+		CFLAG line: change to /nologo /GF /Gm- /Gs0 /Gy /MP /MTd /Od /RTC1 /TC /W3 /Zi + existing defs (add -D_USING_V110_SDK71_ for VS 2010 and up)
+		APP_CFLAG line: /Fd"$(TMP_D)\app"
+		LIB_CFLAG line: /Fd"$(TMP_D)\lib" /Zl
+		LFLAGS line: /nologo /debug /opt:ref /machine:x86 /subsystem:console,5.01
+		INC_D line: change inc32 to $(SRC_D)/include
+		INCO_D line: change inc32 to $(INC_D)/openssl
+		SSL line: change ssleay32 to ssleay32d
+		CRYPTO line: change libeay32 to libeay32d
+
+	Edit e_os.h Line 310 (approx.), change: "if _MSC_VER>=1300" to "if _MSC_VER >= 1300 && _MSC_VER < 1900" to prevent unresolved external for __iob_func() in VS14+
+
+	> nmake -f ms\nt_debug.mak
+
+	> nmake -f ms\nt_debug.mak test
+
+	Copy [basedir]\out32\libeay32d.lib and [basedir]\out32\openssl to rsoutput\lib\openssl\
+
+
+4) Poco (http://pocoproject.org/)
+
+	Foundation
+	----------
+	Edit debug_static_mt Configuration:
+		C/C++ > General > Debug Information Format: /Zi
+		C/C++ > Preprocessor > Preprocessor Definitions: add POCO_WIN32_DEBUGGER_THREAD_NAMES
+		Librarian > General > Output File: change "mt" to "32"
+		Librarian > General > Additional Dependencies: delete all dependencies and uncheck inherit
+
+	Build > Batch Build...:
+		Check debug_static_mt Configuration for Foundation project and click Build
+
+	Copy [basedir]\lib\PocoFoundation32d.lib and [basedir]\Foundation\include\Poco to rsoutput\lib\poco\
+
+	Net
+	---
+	Edit debug_static_mt Configuration:
+		C/C++ > General > Debug Information Format: /Zi
+		C/C++ > Preprocessor > Preprocessor Definitions: add POCO_NO_AUTOMATIC_LIBS
+		Librarian > General > Output File: change "mt" to "32"
+		Librarian > General > Additional Dependencies: delete all dependencies and uncheck inherit
+
+	Batch Build...:
+		Check debug_static_mt Configuration for Net project and click Build
+
+	Copy [basedir]\lib\PocoNet32d.lib and [basedir]\Net\include\Poco to rsoutput\lib\poco\
+
+
+5) Secret Rabbit Code (http://www.mega-nerd.com/SRC/)
+
+	Build using included libsamplerate.vcproj
+
+	Copy [basedir]\out\samplerate32d.lib and [basedir]\src\samplerate.h to rsoutput\lib\samplerate\
+
+
+6) Foobar2000 SDK (http://www.foobar2000.org/SDK/)
+
+	Unzip contents of SDK 2011-03-11 archive to foobar\sdk\
+
+
+7) Windows Template Library (http://sourceforge.net/projects/wtl/)
+
+	In Visual Studio, go to Tools > Options... > Projects and Solutions > VC++ Directories
+
+	Under 'Show directories for: Include files', add link to WTL 8.1's Include directory
+
+
+[6-7 are needed only if building the foobar2000 plug-in.] 

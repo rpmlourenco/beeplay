@@ -1,0 +1,51 @@
+Remote Speakers Output Plug-In
+
+Copyright (c) 2006-2015  Eric Milles
+
+http://emilles.dyndns.org/software/out_apx.html
+
+
+
+VERSION HISTORY
+---------------
+5.4 (2015-11-21):
+* Applied limiting to independent device volume to improve behavior of extreme
+    low and high volumes
+* Improved support for AirServer 5
+
+
+5.3 (2015-08-23):
+* Fixed volume handling for devices that have independent volume control and for
+    those that don't automatically adjust in response to their own volume controls
+* Added width and height checks to prevent sending very large album art that may
+    crash devices
+
+
+5.2 (2015-06-21):
+* Added 256 KB size limit to album art to prevent device crashes
+* Fixed close/disconnect for devices that have stopped responding
+* Fixed resend audio request handling for devices that send from an unusual port
+* Fixed reception of RTSP responses to prevent interpreting one response as the
+    body of the previous
+* Improved support for Marantz AVRs, AirReceiver (on Amazon Fire TV), the latest
+    AirServer release, and unlicensed 3rd-party devices such as AirMobi iDevices
+
+
+5.1 (2015-02-08):
+* Changed connect dialog reveal from 1.5 to 3 seconds to reduce flicker
+* Fixed handling of international characters in profile path for Foobar2000;
+    settings should now be saved and restored correctly in these cases
+* Improved volume handling for audio-video receivers; remote volume is checked
+    before sending player's volume to prevent setting the device to an extremely
+    loud setting and potentially damaging receiver or speakers (or eardrums)
+* Improved recognition of many Denon AVRs and the Klipsch G-17
+
+
+5.0 (2015-01-01):
+* Audio stream (ALAC) is now properly compressed, improving network utilization
+* Improved error handling by replacing error codes with error description print-
+    outs where possible
+* Eliminated a race condition in service discovery subsystem that could occur
+    when stopping an active service discovery operation
+* Improved select error handling and shutdown sequence
+* Updated OpenSSL to 1.0.1j and Poco to 1.6.0

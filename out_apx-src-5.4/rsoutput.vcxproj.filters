@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="sdk">
+      <UniqueIdentifier>{b2bace33-39c3-4583-b421-01bec2a40fda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src.core">
+      <UniqueIdentifier>{8221a9fe-a700-4f86-9a2d-78b39519009e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src.core.impl">
+      <UniqueIdentifier>{0d7c2b6e-48fd-4882-a8dd-d5aa5e33cf9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src.core.impl.raop">
+      <UniqueIdentifier>{3385a082-4c83-4a4c-bf18-e72ba7231e60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src.view">
+      <UniqueIdentifier>{2249d19f-fa93-47ed-b9fb-a790fb57fbda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src.view.impl">
+      <UniqueIdentifier>{9c185d4e-9af2-4b3e-a851-37a78e665206}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(ProjectName)\src\core\impl\Debugger.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\DeviceDiscovery.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\DeviceInfo.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\DeviceManager.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\DeviceUtils.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\Main.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\Options.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputBuffer.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputComponent.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputFormat.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputMetadata.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\OutputReformatter.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\Platform.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\Plugin.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\RemoteControl.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\ServiceDiscovery.cpp">
+      <Filter>src.core.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\NTPTimestamp.cpp">
+      <Filter>src.core.impl.raop</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\PacketBuffer.cpp">
+      <Filter>src.core.impl.raop</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\RAOPDevice.cpp">
+      <Filter>src.core.impl.raop</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\RAOPEngine.cpp">
+      <Filter>src.core.impl.raop</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\core\impl\raop\RTSPClient.cpp">
+      <Filter>src.core.impl.raop</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\view\impl\ConnectDialog.cpp">
+      <Filter>src.view.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\view\impl\DeviceDialog.cpp">
+      <Filter>src.view.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\view\impl\Dialog.cpp">
+      <Filter>src.view.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\view\impl\MessageDialog.cpp">
+      <Filter>src.view.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\view\impl\OptionsDialog.cpp">
+      <Filter>src.view.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProjectName)\src\view\impl\PasswordDialog.cpp">
+      <Filter>src.view.impl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(ProjectName)\sdk\Debugger.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\DeviceUtils.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\MessageDialog.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\OptionsDialog.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\OptionsUtils.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\OutputComponent.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\OutputFormat.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\OutputMetadata.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\Platform.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\Platform.inl">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\Player.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\Plugin.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\sdk\Uncopyable.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\DeviceDiscovery.h">
+      <Filter>src.core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\DeviceInfo.h">
+      <Filter>src.core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\DeviceNotification.h">
+      <Filter>src.core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\NumberParser.h">
+      <Filter>src.core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\Options.h">
+      <Filter>src.core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\ServiceDiscovery.h">
+      <Filter>src.core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\Device.h">
+      <Filter>src.core.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\DeviceManager.h">
+      <Filter>src.core.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\OutputBuffer.h">
+      <Filter>src.core.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\OutputObserver.h">
+      <Filter>src.core.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\OutputReformatter.h">
+      <Filter>src.core.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\OutputSink.h">
+      <Filter>src.core.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\RemoteControl.h">
+      <Filter>src.core.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\NTPTimestamp.h">
+      <Filter>src.core.impl.raop</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\PacketBuffer.h">
+      <Filter>src.core.impl.raop</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\Random.h">
+      <Filter>src.core.impl.raop</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\RAOPDefs.h">
+      <Filter>src.core.impl.raop</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\RAOPDevice.h">
+      <Filter>src.core.impl.raop</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\RAOPEngine.h">
+      <Filter>src.core.impl.raop</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\core\impl\raop\RTSPClient.h">
+      <Filter>src.core.impl.raop</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\view\ConnectDialog.h">
+      <Filter>src.view</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\view\PasswordDialog.h">
+      <Filter>src.view</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\view\impl\DeviceDialog.h">
+      <Filter>src.view.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\view\impl\Dialog.h">
+      <Filter>src.view.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProjectName)\src\view\impl\Resources.h">
+      <Filter>src.view.impl</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="$(ProjectName)\src\view\impl\Resources.rc">
+      <Filter>src.view.impl</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
