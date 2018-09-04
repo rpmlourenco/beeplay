@@ -47,10 +47,11 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>advapi32.lib;LibALAC32.lib;gdi32.lib;iphlpapi.lib;libeay32d.lib;PocoFoundationmtd.lib;PocoNetmtd.lib;samplerate32d.lib;user32.lib;ws2_32.lib</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;LibALAC32.lib;gdi32.lib;iphlpapi.lib;libeay32d.lib;PocoFoundationd.lib;PocoNetd.lib;samplerate32.lib;user32.lib;ws2_32.lib</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)\pre-post-commands\post-build-rsoutput.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
