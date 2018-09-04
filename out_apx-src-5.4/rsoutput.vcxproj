@@ -31,7 +31,7 @@
     <OutDir>$(ProjectName)\$(Configuration)\</OutDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(SolutionDir)\bonjour-3.0.0.10\include;$(SolutionDir)\libalac-1.0.4p1\LibALAC;$(SolutionDir)\libsamplerate-0.1.9\src;$(SolutionDir)\openssl-1.0.1j\include;$(SolutionDir)\poco-1.6.0\Foundation\include;$(SolutionDir)\poco-1.6.0\Net\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)bonjour-3.0.0.10\include;$(SolutionDir)libalac-1.0.4p1\LibALAC;$(SolutionDir)libsamplerate-0.1.9\src;$(ProjectDir)rsoutput\include;$(SolutionDir)poco-1.6.0\Foundation\include;$(SolutionDir)poco-1.6.0\Net\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\libalac-1.0.4p1\$(Configuration);$(SolutionDir)\libsamplerate-0.1.9\out;$(SolutionDir)\openssl-1.0.1j\out32;$(SolutionDir)\poco-1.6.0\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
