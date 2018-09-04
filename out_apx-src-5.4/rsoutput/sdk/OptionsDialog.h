@@ -38,7 +38,7 @@ public:
 	void doApply();
 	bool isDirty() const;
 
-	typedef std::tr1::function<void (bool)> StatusCallback;
+	typedef std::function<void (bool)> StatusCallback;
 	void setStatusCallback(StatusCallback);
 
 private:

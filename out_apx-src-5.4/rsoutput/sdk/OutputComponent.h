@@ -54,7 +54,7 @@ public:
 	void setMetadata(const OutputMetadata&, time_t progress = 0);
 
 	// optional notification that bytes written have been transmitted
-	typedef std::tr1::function<void (size_t)> ProgressCallback;
+	typedef std::function<void (size_t)> ProgressCallback;
 	void setProgressCallback(ProgressCallback);
 
 private:

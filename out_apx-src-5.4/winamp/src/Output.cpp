@@ -176,10 +176,10 @@ INT_PTR Output::optionsDialogProc(HWND dialogWindow, UINT message, WPARAM wParam
 		optionsDialog.reset(new OptionsDialog);
 		optionsDialog->setStatusCallback(
 			// create callback that will update apply button
-			std::tr1::bind(
+			std::bind(
 				SetWindowEnabled,
 				GetDlgItem(dialogWindow, IDOK),
-				std::tr1::placeholders::_1));
+				std::placeholders::_1));
 		optionsDialog->doModeless(
 			GetDlgItem(dialogWindow, DIALOG_OPTIONS_CHILD_FRAME));
 		break;
