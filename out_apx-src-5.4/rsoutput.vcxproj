@@ -164,5 +164,19 @@
   <ItemGroup>
     <ResourceCompile Include="$(ProjectName)\src\view\impl\Resources.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libalac-1.0.4p1\LibALAC\LibALAC.vcxproj">
+      <Project>{42fe9a3d-daae-4e01-ab64-50dbc12ef3f3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\libsamplerate-0.1.9\libsamplerate.vcxproj">
+      <Project>{2aebcf4f-bb0a-4602-8336-a072ad39f6f6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\poco-1.6.0\Foundation\Foundation_vs120.vcxproj">
+      <Project>{8164d41d-b053-405b-826c-cf37ac0ef176}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\poco-1.6.0\Net\Net_vs120.vcxproj">
+      <Project>{b057a1fe-09f7-465e-b8b5-e1b659051d76}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
