@@ -34,7 +34,8 @@ public:
 		bool activated; bool available;
 	};
 	typedef std::vector<const Info> InfoList;
-	typedef std::tr1::shared_ptr<InfoList> InfoListPtr;
+	//RML 2017 migration
+	typedef std::shared_ptr<InfoList> InfoListPtr;
 
 public:
 	DeviceUtils();

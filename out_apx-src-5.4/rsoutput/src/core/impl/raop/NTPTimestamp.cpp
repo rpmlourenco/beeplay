@@ -25,7 +25,8 @@ using Poco::Timestamp;
 
 static const int64_t MICROSECONDS_PER_SECOND = 1000000;
 static const int64_t SECONDS_FROM_1900_TO_1970 = 0x83AA7E80;
-static const int64_t UINT32_MAX = std::numeric_limits<uint32_t>::max();
+//RML 2017 migration
+//static const int64_t UINT32_MAX = std::numeric_limits<uint32_t>::max();
 
 
 NTPTimestamp& NTPTimestamp::operator =(const Timestamp& timestamp)
