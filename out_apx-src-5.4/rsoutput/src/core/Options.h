@@ -65,8 +65,8 @@ private:
 	bool _resetOnPause;
 
 	DeviceInfoSet _devices;
-	std::set<const std::string> _activatedDevices;
-	std::map<const std::string,const std::pair<const std::string,bool>> _devicePasswords;
+	std::set<std::string> _activatedDevices;
+	std::map<std::string, std::pair<std::string,bool>> _devicePasswords;
 
 	friend bool operator ==(const Options&, const Options&);
 };

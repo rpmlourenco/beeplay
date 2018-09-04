@@ -54,7 +54,7 @@ private:
 	UINT8 _itemCount;
 
 	DeviceUtils _devices;
-	std::vector<const std::string> _names;
+	std::vector<std::string> _names;
 };
 
 

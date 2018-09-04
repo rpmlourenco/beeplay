@@ -70,8 +70,8 @@ enum Command
 struct Request
 {
 	Command command;
-	std::map<const std::string,const std::string> params;
-	std::map<const std::string,const std::string> headers;
+	std::map< std::string, std::string> params;
+	std::map< std::string, std::string> headers;
 };
 
 

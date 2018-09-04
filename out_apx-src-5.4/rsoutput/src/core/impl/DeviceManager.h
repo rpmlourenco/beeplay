@@ -69,7 +69,7 @@ private:
 private:
 	OutputSink::SharedPtr _deviceOutputSink;
 
-	typedef std::map<const std::string,Device::SharedPtr> DeviceMap;
+	typedef std::map< std::string,Device::SharedPtr> DeviceMap;
 	DeviceMap _devices; // must be declared after device output sink
 
 	typedef Poco::Observer<DeviceManager,DeviceNotification> DeviceObserver;

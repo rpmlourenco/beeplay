@@ -73,7 +73,7 @@ struct DeviceInfoNameLess
 	}
 };
 
-typedef std::set<const DeviceInfo,DeviceInfoNameLess> DeviceInfoSet;
+typedef std::set<DeviceInfo,DeviceInfoNameLess> DeviceInfoSet;
 
 
 #endif // DeviceInfo_h

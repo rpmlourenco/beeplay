@@ -32,7 +32,7 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)bonjour-3.0.0.10\include;$(SolutionDir)libalac-1.0.4p1\LibALAC;$(SolutionDir)libsamplerate-0.1.9\src;$(ProjectDir)rsoutput\include;$(SolutionDir)poco-1.6.0\Foundation\include;$(SolutionDir)poco-1.6.0\Net\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\libalac-1.0.4p1\$(Configuration);$(SolutionDir)\libsamplerate-0.1.9\out;$(SolutionDir)\openssl-1.0.1j\out32;$(SolutionDir)\poco-1.6.0\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)libalac-1.0.4p1\$(Configuration);$(SolutionDir)libsamplerate-0.1.9\out\$(Configuration);$(ProjectDir)rsoutput\lib\openssl\$(Configuration);$(SolutionDir)poco-1.6.0\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -78,10 +78,11 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>advapi32.lib;LibALAC32.lib;gdi32.lib;iphlpapi.lib;libeay32r.lib;PocoFoundationmt.lib;PocoNetmt.lib;samplerate32r.lib;user32.lib;ws2_32.lib</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;LibALAC32.lib;gdi32.lib;iphlpapi.lib;legacy_stdio_definitions.lib;libeay32.lib;PocoFoundationmt.lib;PocoNetmt.lib;samplerate32.lib;user32.lib;ws2_32.lib</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)\pre-post-commands\post-build-rsoutput.bat" "$(SolutionDir)" "$(TargetPath)"</Command>

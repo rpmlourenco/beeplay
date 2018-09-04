@@ -96,7 +96,7 @@ public:
 	void build(buffer_t& requestData, std::string& requestText, const std::string& requestURI) {
 		requestText.assign(Poco::format("%s %s RTSP/1.0\r\n", _method, requestURI));
 
-		typedef std::map<const std::string,const std::string>::const_iterator headers_iterator;
+		typedef std::map<std::string, std::string>::const_iterator headers_iterator;
 		for (headers_iterator it = _headers.begin(); it != _headers.end(); ++it) {
 			requestText.append(it->first + ": " + it->second + "\r\n");
 		}
@@ -131,7 +131,7 @@ public:
 private:
 	std::string _method;
 	buffer_t _bodyData;  std::string _bodyText;
-	std::map<const std::string,const std::string> _headers;
+	std::map< std::string, std::string> _headers;
 };
 
 
@@ -212,7 +212,7 @@ public:
 private:
 	int _statusCode;  std::string _statusText;
 	std::string _protocol;  std::string _version;
-	std::map<const std::string,const std::string> _headers;
+	std::map< std::string, std::string> _headers;
 };
 
 

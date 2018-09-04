@@ -33,7 +33,7 @@ public:
 		std::string display_name;
 		bool activated; bool available;
 	};
-	typedef std::vector<const Info> InfoList;
+	typedef std::vector<Info> InfoList;
 	//RML 2017 migration
 	typedef std::shared_ptr<InfoList> InfoListPtr;
 
