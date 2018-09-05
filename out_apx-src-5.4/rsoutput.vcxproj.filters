@@ -224,4 +224,12 @@
       <Filter>src.view.impl</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="rsoutput\etc\AirPortExpress.ico" />
+    <Image Include="rsoutput\etc\AppleTV.ico" />
+    <Image Include="rsoutput\etc\AirfoilSpeakers.ico" />
+    <Image Include="rsoutput\etc\AirServer.ico" />
+    <Image Include="rsoutput\etc\Receiver.ico" />
+    <Image Include="rsoutput\etc\Speaker.ico" />
+  </ItemGroup>
 </Project>

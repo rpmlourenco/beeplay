@@ -28,14 +28,14 @@
   <PropertyGroup>
     <TargetName>out_apx</TargetName>
     <IntDir>$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir>..\..\Music Players\MusicBee\</OutDir>
+    <OutDir>$(ProjectName)\$(Configuration)\</OutDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Message>Deleting $(TargetFileName) from player directory...</Message>
-      <Command>call "$(SolutionDir)\pre-post-commands\pre-build-winamp.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
+      <Command>call "$(SolutionDir)pre-post-commands\pre-build-winamp.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
     </PreBuildEvent>
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectName)\sdk;rsoutput\sdk</AdditionalIncludeDirectories>
@@ -53,11 +53,11 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Message>Copying $(TargetFileName) to player directory...</Message>
-      <Command>call "$(SolutionDir)\pre-post-commands\post-build-winamp.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
+      <Command>call "$(SolutionDir)pre-post-commands\post-build-winamp.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

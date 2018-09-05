@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -46,6 +44,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
@@ -54,7 +53,7 @@ END
 DIALOG_CONNECT DIALOGEX 0, 0, 205, 90
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Remote Speakers output"
-FONT 8, "MS Shell Dlg 2"
+FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Cancel",IDCANCEL,77,71,50,14
     CONTROL         "",DIALOG_CONNECT_PROGRESS,"msctls_progress32",WS_BORDER,7,31,191,14
@@ -64,7 +63,7 @@ END
 DIALOG_DEVICE DIALOGEX 0, 0, 205, 90
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Remote Speakers output - Device setup"
-FONT 8, "MS Shell Dlg 2"
+FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,44,71,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,110,71,50,14
@@ -80,7 +79,7 @@ END
 
 DIALOG_OPTIONS DIALOGEX 0, 0, 205, 105
 STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
-FONT 8, "MS Shell Dlg 2"
+FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
 BEGIN
     LISTBOX         DIALOG_OPTIONS_LISTBOX_SPEAKERS,70,5,130,47,LBS_SORT | LBS_MULTIPLESEL | LBS_OWNERDRAWFIXED | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Allow player to control volume of remote speakers",DIALOG_OPTIONS_CHECKBOX_VOLCONTROL,
@@ -90,12 +89,13 @@ BEGIN
     CONTROL         "Clear playback buffer of remote speakers on pause",DIALOG_OPTIONS_CHECKBOX_RESETONPAUSE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,88,194,10
     LTEXT           "Remote speakers:",IDC_STATIC,5,6,59,8
+    CTEXT           "VS 2017 :)",IDC_STATIC,15,20,39,8
 END
 
 DIALOG_PASSWORD DIALOGEX 0, 0, 205, 90
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Remote Speakers output"
-FONT 8, "MS Shell Dlg 2"
+FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,44,71,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,110,71,50,14
@@ -106,13 +106,14 @@ BEGIN
     LTEXT           "Password:",IDC_STATIC,7,33,34,8
 END
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     DIALOG_CONNECT, DIALOG
     BEGIN
@@ -148,6 +149,7 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -182,20 +184,41 @@ BEGIN
     END
 END
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Icon
 //
 
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
 ICON_APX                ICON                    "..\\..\\..\\etc\\AirPortExpress.ico"
+
 ICON_ATV                ICON                    "..\\..\\..\\etc\\AppleTV.ico"
+
 ICON_AFS                ICON                    "..\\..\\..\\etc\\AirfoilSpeakers.ico"
+
 ICON_ASV                ICON                    "..\\..\\..\\etc\\AirServer.ico"
+
 ICON_AVR                ICON                    "..\\..\\..\\etc\\Receiver.ico"
+
 ICON_ANY                ICON                    "..\\..\\..\\etc\\Speaker.ico"
 
-#endif    // English (U.S.) resources
+
 /////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+DIALOG_OPTIONS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -203,5 +226,7 @@ ICON_ANY                ICON                    "..\\..\\..\\etc\\Speaker.ico"
 // Generated from the TEXTINCLUDE 3 resource.
 //
 
+
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+

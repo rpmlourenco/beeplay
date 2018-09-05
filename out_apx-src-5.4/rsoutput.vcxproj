@@ -32,7 +32,7 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)bonjour-3.0.0.10\include;$(SolutionDir)libalac-1.0.4p1\LibALAC;$(SolutionDir)libsamplerate-0.1.9\src;$(ProjectDir)rsoutput\include;$(SolutionDir)poco-1.6.0\Foundation\include;$(SolutionDir)poco-1.6.0\Net\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)libalac-1.0.4p1\$(Configuration);$(SolutionDir)libsamplerate-0.1.9\out\$(Configuration);$(ProjectDir)rsoutput\lib\openssl\$(Configuration);$(SolutionDir)poco-1.6.0\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)libalac-1.0.4p1\$(Configuration);$(SolutionDir)libsamplerate-0.1.9\out\$(Configuration);$(ProjectDir)rsoutput\lib\openssl;$(SolutionDir)poco-1.6.0\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,11 +54,11 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>call "$(SolutionDir)\pre-post-commands\post-build-rsoutput.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
+      <Command>call "$(SolutionDir)pre-post-commands\post-build-rsoutput.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
       <Message>Copying $(TargetFileName) to player directory...</Message>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call "$(SolutionDir)\pre-post-commands\pre-build-rsoutput.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
+      <Command>call "$(SolutionDir)pre-post-commands\pre-build-rsoutput.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
       <Message>Deleting $(TargetFileName) from player directory...</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -165,6 +165,14 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="$(ProjectName)\src\view\impl\Resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="rsoutput\etc\AirfoilSpeakers.ico" />
+    <Image Include="rsoutput\etc\AirPortExpress.ico" />
+    <Image Include="rsoutput\etc\AirServer.ico" />
+    <Image Include="rsoutput\etc\AppleTV.ico" />
+    <Image Include="rsoutput\etc\Receiver.ico" />
+    <Image Include="rsoutput\etc\Speaker.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
