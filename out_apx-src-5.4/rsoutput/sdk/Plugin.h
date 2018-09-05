@@ -25,7 +25,7 @@
 class RSOUTPUT_API Plugin
 {
 public:
-	static uint32_t id();
+	static intptr_t id();
 	static uint64_t dacpId();
 
 	static const std::string& name();

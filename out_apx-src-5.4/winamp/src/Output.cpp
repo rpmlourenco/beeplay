@@ -96,10 +96,10 @@ void Output::init()
 				DWORD pathLength = GetModuleFileNameA(dllInstance, pathBuffer, MAX_PATH);
 				if (pathLength > 0 && pathLength <= MAX_PATH)
 				{
-					const std::string pathString(pathBuffer, pathLength);
-					const std::string::size_type pos = pathString.find_last_of('\\');
+					const std::string pathString2(pathBuffer, pathLength);
+					const std::string::size_type pos = pathString2.find_last_of('\\');
 					if (pos != std::string::npos)
-						_iniFilePath.assign(pathString.substr(0, pos + 1));
+						_iniFilePath.assign(pathString2.substr(0, pos + 1));
 				}
 			}
 

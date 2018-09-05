@@ -34,19 +34,19 @@ NTPTimestamp& NTPTimestamp::operator =(const Timestamp& timestamp)
 	int64_t microseconds = timestamp.epochMicroseconds();
 
 	// calculate NTP timestamp seconds
-	int64_t seconds = microseconds / MICROSECONDS_PER_SECOND;
+	int64_t lseconds = microseconds / MICROSECONDS_PER_SECOND;
 	// NTP epoch is Jan 1, 1900; Timestamp epoch is Jan 1, 1970
-	seconds += SECONDS_FROM_1900_TO_1970;
-	assert(seconds <= RUINT32_MAX);
+	lseconds += SECONDS_FROM_1900_TO_1970;
+	assert(lseconds <= RUINT32_MAX);
 
 	// calculate NTP timestamp fractional seconds
 	microseconds %= MICROSECONDS_PER_SECOND;
-	int64_t fractionalSeconds =
+	int64_t lfractionalSeconds =
 		(microseconds * (RUINT32_MAX + 1)) / MICROSECONDS_PER_SECOND;
-	assert(fractionalSeconds <= RUINT32_MAX);
+	assert(lfractionalSeconds <= RUINT32_MAX);
 
-	this->seconds = static_cast<uint32_t>(seconds);
-	this->fractionalSeconds = static_cast<uint32_t>(fractionalSeconds);
+	this->seconds = static_cast<uint32_t>(lseconds);
+	this->fractionalSeconds = static_cast<uint32_t>(lfractionalSeconds);
 
 	return *this;
 }
@@ -55,9 +55,9 @@ NTPTimestamp& NTPTimestamp::operator =(const Timestamp& timestamp)
 NTPTimestamp::operator Timestamp() const
 {
 	// NTP epoch is Jan 1, 1900; Timestamp epoch is Jan 1, 1970
-	const int64_t seconds = this->seconds - SECONDS_FROM_1900_TO_1970;
+	const int64_t lseconds = this->seconds - SECONDS_FROM_1900_TO_1970;
 
-	int64_t microseconds = seconds * MICROSECONDS_PER_SECOND;
+	int64_t microseconds = lseconds * MICROSECONDS_PER_SECOND;
 	microseconds += (fractionalSeconds * MICROSECONDS_PER_SECOND) / (RUINT32_MAX + 1);
 
 	return Timestamp(microseconds);

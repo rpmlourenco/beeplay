@@ -51,7 +51,7 @@ using std::time_t;
 typedef UINT8 byte_t;
 typedef TCHAR char_t;
 typedef std::vector<byte_t> buffer_t;
-typedef std::pair<short,short> shorts_t;
+typedef std::pair<int,int> shorts_t;
 typedef std::basic_string<TCHAR> string_t;
 
 

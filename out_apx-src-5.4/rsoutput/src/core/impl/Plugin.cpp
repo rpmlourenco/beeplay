@@ -24,7 +24,7 @@
 using Poco::Net::DNS;
 
 
-uint32_t Plugin::id()
+intptr_t Plugin::id()
 {
 	return 76777;
 }
