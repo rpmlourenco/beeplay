@@ -28,7 +28,7 @@
   <PropertyGroup>
     <TargetName>out_apx</TargetName>
     <IntDir>$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir>$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>..\..\Music Players\MusicBee\</OutDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
