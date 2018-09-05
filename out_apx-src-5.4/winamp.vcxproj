@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
-      <Message>Deleting $(TargetFileName) from player directory...</Message>
+      <Message>Deleting $(TargetFileName) from player directory..</Message>
       <Command>call "$(SolutionDir)pre-post-commands\pre-build-winamp.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
     </PreBuildEvent>
     <ClCompile>
