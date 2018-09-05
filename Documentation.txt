@@ -1,0 +1,10 @@
+https://nto.github.io/AirPlay.html
+
+http://www.ietf.org/rfc/rfc2326.txt
+
+https://sourceforge.net/projects/raop-play/
+
+https://github.com/philippe44/RAOP-Player
+
+https://github.com/macosforge/alac
+
