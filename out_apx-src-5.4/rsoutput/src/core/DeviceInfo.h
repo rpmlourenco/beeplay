@@ -28,6 +28,8 @@ class DeviceInfo
 public:
 	enum DeviceType
 	{
+		// RML new type
+		WIN = 0, // Window Primary Sound Driver
 		APX = 1, // AirPort Express
 		ATV = 2, // Apple TV
 		AVR = 3, // Audio-Video Receiver

@@ -91,6 +91,15 @@ void DeviceDiscoveryImpl::addListener(DeviceDiscovery::Listener& listener)
 		ServiceDiscovery::start(_discovery);
 	}
 
+	// RML insert special device
+	const DeviceInfo device(
+		DeviceInfo::WIN,
+		"Primary Sound Driver",
+		std::make_pair("Primary Sound Driver", "0"),
+		true); // zeroConf = yes
+
+	_devices.insert(std::make_pair(device.name(), device));
+
 	assert(_listeners.count(&listener) == 0);
 	_listeners.insert(&listener);
 
