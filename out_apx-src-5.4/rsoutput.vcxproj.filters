@@ -19,6 +19,9 @@
     <Filter Include="src.view.impl">
       <UniqueIdentifier>{9c185d4e-9af2-4b3e-a851-37a78e665206}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src.core.impl.wasapi">
+      <UniqueIdentifier>{b1abb447-3604-4a37-915a-b9dd30d20efe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(ProjectName)\src\core\impl\Debugger.cpp">
@@ -101,6 +104,9 @@
     </ClCompile>
     <ClCompile Include="$(ProjectName)\src\view\impl\PasswordDialog.cpp">
       <Filter>src.view.impl</Filter>
+    </ClCompile>
+    <ClCompile Include="rsoutput\src\core\impl\wasapi\WASAPIDevice.cpp">
+      <Filter>src.core.impl.wasapi</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="$(ProjectName)\src\view\impl\Resources.h">
       <Filter>src.view.impl</Filter>
+    </ClInclude>
+    <ClInclude Include="rsoutput\src\core\impl\wasapi\WASAPIDevice.h">
+      <Filter>src.core.impl.wasapi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

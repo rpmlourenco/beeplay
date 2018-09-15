@@ -23,6 +23,8 @@
 #include "Uncopyable.h"
 #include "raop/RAOPDevice.h"
 #include "raop/RAOPEngine.h"
+//RML include new special wasapi device
+#include "wasapi/WASAPIDevice.h"
 #include <cassert>
 #include <stdexcept>
 #include <string>
@@ -263,6 +265,11 @@ Device::SharedPtr DeviceManager::createDevice(const DeviceInfo& deviceInfo)
 			// check device type bit-field for encryption and metadata settings
 			!!(HIWORD(deviceInfo.type()) & 0x08), (HIWORD(deviceInfo.type()) & 0x07));
 
+	//RML create special wasapi device
+	case DeviceInfo::WIN:
+		return new WASAPIDevice(RAOP_ENGINE,
+			WASAPIDevice::ET_NONE, WASAPIDevice::MD_NONE);
+
 	default:
 		const std::string message(Poco::format(
 			"Unable to playback to remote speakers \"%s\".\r\n\r\n"
@@ -295,68 +302,72 @@ void DeviceManager::openDevice(const DeviceInfo& deviceInfo)
 
 			_devices[deviceInfo.name()] = device;
 
-			// run dialog box that will asynchronously resolve service name to
-			// host and port, resolve host to IP address and connect to address
-			// and port
-			ConnectDialog connectDialog(deviceInfo);
-			if (connectDialog.doModal() != 0)
-			{
-				const std::string message(Poco::format(
-					"Unable to connect to remote speakers \"%s\".",
-					deviceInfo.name()));
-				throw std::runtime_error(message);
-			}
-			StreamSocket& socket = connectDialog.socket();
+			if (deviceInfo.type() != DeviceInfo::WIN) {
 
-			Debugger::printf("Connected to remote speakers \"%s\" at %s.",
-				deviceInfo.name().c_str(), socket.peerAddress().toString().c_str());
-
-			int returnCode = device->test(socket, true);
-
-			// check if remote speakers require a password
-			while (returnCode == 401)
-			{
-				Options::SharedPtr options = Options::getOptions();
-
-				// check for password in options
-				if (options->getPassword(deviceInfo.name()).empty())
+				// run dialog box that will asynchronously resolve service name to
+				// host and port, resolve host to IP address and connect to address
+				// and port
+				ConnectDialog connectDialog(deviceInfo);
+				if (connectDialog.doModal() != 0)
 				{
-					// prompt user for password
-					PasswordDialog passwordDialog(deviceInfo.name());
-					if (passwordDialog.doModal(_player.window()))
+					const std::string message(Poco::format(
+						"Unable to connect to remote speakers \"%s\".",
+						deviceInfo.name()));
+					throw std::runtime_error(message);
+				}
+				StreamSocket& socket = connectDialog.socket();
+
+				Debugger::printf("Connected to remote speakers \"%s\" at %s.",
+					deviceInfo.name().c_str(), socket.peerAddress().toString().c_str());
+
+				int returnCode = device->test(socket, true);
+
+				// check if remote speakers require a password
+				while (returnCode == 401)
+				{
+					Options::SharedPtr options = Options::getOptions();
+
+					// check for password in options
+					if (options->getPassword(deviceInfo.name()).empty())
 					{
-						throw std::invalid_argument("No password entered.");
+						// prompt user for password
+						PasswordDialog passwordDialog(deviceInfo.name());
+						if (passwordDialog.doModal(_player.window()))
+						{
+							throw std::invalid_argument("No password entered.");
+						}
+
+						options->setPassword(deviceInfo.name(),
+							passwordDialog.password(),
+							passwordDialog.rememberPassword());
 					}
 
-					options->setPassword(deviceInfo.name(),
-						passwordDialog.password(),
-						passwordDialog.rememberPassword());
+					device->setPassword(options->getPassword(deviceInfo.name()));
+
+					returnCode = device->test(socket, false);
+
+					// check if password was not accepted
+					if (returnCode == 401)
+					{
+						options->clearPassword(deviceInfo.name());
+					}
+
+					// repeat until password is accepted or user cancels
 				}
 
-				device->setPassword(options->getPassword(deviceInfo.name()));
+				device->close();
 
-				returnCode = device->test(socket, false);
-
-				// check if password was not accepted
-				if (returnCode == 401)
+				// check for initiation error
+				if (returnCode)
 				{
-					options->clearPassword(deviceInfo.name());
+					const std::string message(Poco::format(
+						"Unable to initiate session with remote speakers \"%s\".\r\n\r\n"
+						"Error code: %i", deviceInfo.name(), returnCode));
+					MessageDialog(message, MB_ICONERROR).doModal();
+
+					throw std::runtime_error(message);
 				}
 
-				// repeat until password is accepted or user cancels
-			}
-
-			device->close();
-
-			// check for initiation error
-			if (returnCode)
-			{
-				const std::string message(Poco::format(
-					"Unable to initiate session with remote speakers \"%s\".\r\n\r\n"
-					"Error code: %i", deviceInfo.name(), returnCode));
-				MessageDialog(message, MB_ICONERROR).doModal();
-
-				throw std::runtime_error(message);
 			}
 		}
 
@@ -370,95 +381,109 @@ void DeviceManager::openDevice(const DeviceInfo& deviceInfo)
 				RAOP_ENGINE.reinit(_outputInterval);
 			}
 
-			// run dialog box that will asynchronously resolve service name to
-			// host and port, resolve host to IP address and connect to address
-			// and port
-			ConnectDialog connectDialog(deviceInfo);
-			if (connectDialog.doModal() != 0)
-			{
-				const std::string message(Poco::format(
-					"Unable to connect to remote speakers \"%s\".",
-					deviceInfo.name()));
-				throw std::runtime_error(message);
-			}
-			StreamSocket& socket = connectDialog.socket();
+			if (deviceInfo.type() != DeviceInfo::WIN) {
 
-			AudioJackStatus audioJackStatus = AUDIO_JACK_CONNECTED;
-
-			// negotiate session parameters with remote speakers
-			int returnCode = device->open(socket, audioJackStatus);
-
-			// check if remote speakers require a password
-			while (returnCode == 401)
-			{
-				Options::SharedPtr options = Options::getOptions();
-
-				// check for password in options
-				if (options->getPassword(deviceInfo.name()).empty())
+				// run dialog box that will asynchronously resolve service name to
+				// host and port, resolve host to IP address and connect to address
+				// and port
+				ConnectDialog connectDialog(deviceInfo);
+				if (connectDialog.doModal() != 0)
 				{
-					// prompt user for password
-					PasswordDialog passwordDialog(deviceInfo.name());
-					if (passwordDialog.doModal(_player.window()))
+					const std::string message(Poco::format(
+						"Unable to connect to remote speakers \"%s\".",
+						deviceInfo.name()));
+					throw std::runtime_error(message);
+				}
+				StreamSocket& socket = connectDialog.socket();
+
+				AudioJackStatus audioJackStatus = AUDIO_JACK_CONNECTED;
+
+				// negotiate session parameters with remote speakers
+				int returnCode = device->open(socket, audioJackStatus);
+
+				// check if remote speakers require a password
+				while (returnCode == 401)
+				{
+					Options::SharedPtr options = Options::getOptions();
+
+					// check for password in options
+					if (options->getPassword(deviceInfo.name()).empty())
 					{
-						throw std::invalid_argument("No password entered.");
+						// prompt user for password
+						PasswordDialog passwordDialog(deviceInfo.name());
+						if (passwordDialog.doModal(_player.window()))
+						{
+							throw std::invalid_argument("No password entered.");
+						}
+
+						options->setPassword(deviceInfo.name(),
+							passwordDialog.password(),
+							passwordDialog.rememberPassword());
 					}
 
-					options->setPassword(deviceInfo.name(),
-						passwordDialog.password(),
-						passwordDialog.rememberPassword());
+					device->setPassword(options->getPassword(deviceInfo.name()));
+
+					// negotiate session parameters with remote speakers again
+					returnCode = device->open(socket, audioJackStatus);
+
+					// check if password was not accepted
+					if (returnCode == 401)
+					{
+						options->clearPassword(deviceInfo.name());
+					}
+
+					// repeat until password is accepted or user cancels
 				}
 
-				device->setPassword(options->getPassword(deviceInfo.name()));
-
-				// negotiate session parameters with remote speakers again
-				returnCode = device->open(socket, audioJackStatus);
-
-				// check if password was not accepted
-				if (returnCode == 401)
+				// check for negotiation error
+				if (returnCode)
 				{
-					options->clearPassword(deviceInfo.name());
+					if (returnCode == 453)
+					{
+						const std::string message(Poco::format(
+							"Remote speakers \"%s\" are in use by another player.",
+							deviceInfo.name()));
+						MessageDialog(message).doModal();
+
+						throw std::runtime_error(message);
+					}
+					else
+					{
+						const std::string message(Poco::format(
+							"Unable to connect to remote speakers \"%s\".\r\n\r\n"
+							"Error code: %i", deviceInfo.name(), returnCode));
+						MessageDialog(message, MB_ICONERROR).doModal();
+
+						throw std::runtime_error(message);
+					}
 				}
-
-				// repeat until password is accepted or user cancels
-			}
-
-			// check for negotiation error
-			if (returnCode)
-			{
-				if (returnCode == 453)
+				else if (audioJackStatus == AUDIO_JACK_DISCONNECTED)
 				{
 					const std::string message(Poco::format(
-						"Remote speakers \"%s\" are in use by another player.",
+						"Audio jack on remote speakers \"%s\" is not connected.",
 						deviceInfo.name()));
 					MessageDialog(message).doModal();
-
-					throw std::runtime_error(message);
 				}
-				else
+
+				if (deviceInfo.type() == DeviceInfo::AVR) device->getVolume();
+				if (volumeSet()) device->setVolume(_volume, 0);
+
+				if (_outputMetadata.length() > 0 || !_outputMetadata.title().empty())
 				{
-					const std::string message(Poco::format(
-						"Unable to connect to remote speakers \"%s\".\r\n\r\n"
-						"Error code: %i", deviceInfo.name(), returnCode));
-					MessageDialog(message, MB_ICONERROR).doModal();
-
-					throw std::runtime_error(message);
+					device->updateMetadata(_outputMetadata);
+					device->updateProgress(_outputInterval);
 				}
-			}
-			else if (audioJackStatus == AUDIO_JACK_DISCONNECTED)
-			{
-				const std::string message(Poco::format(
-					"Audio jack on remote speakers \"%s\" is not connected.",
-					deviceInfo.name()));
-				MessageDialog(message).doModal();
-			}
 
-			if (deviceInfo.type() == DeviceInfo::AVR) device->getVolume();
-			if (volumeSet()) device->setVolume(_volume, 0);
-
-			if (_outputMetadata.length() > 0 || !_outputMetadata.title().empty())
+			} 
+			else
 			{
-				device->updateMetadata(_outputMetadata);
-				device->updateProgress(_outputInterval);
+				//WASAPI device
+				StreamSocket& dummySocket = *new(StreamSocket);
+				AudioJackStatus audioJackStatus = AUDIO_JACK_CONNECTED;
+				int returnCode = device->open(dummySocket, audioJackStatus);
+				if (!returnCode) {
+					Debugger::printf("Opened WASAPI device");
+				}
 			}
 		}
 		else if (_outputMetadata.length() > 0)
