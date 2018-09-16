@@ -122,9 +122,7 @@
     <ClCompile Include="$(ProjectName)\src\view\impl\MessageDialog.cpp" />
     <ClCompile Include="$(ProjectName)\src\view\impl\OptionsDialog.cpp" />
     <ClCompile Include="$(ProjectName)\src\view\impl\PasswordDialog.cpp" />
-    <ClCompile Include="rsoutput\src\core\impl\wasapi\stdafx.cpp" />
     <ClCompile Include="rsoutput\src\core\impl\wasapi\WASAPIDevice.cpp" />
-    <ClCompile Include="rsoutput\src\core\impl\wasapi\WASAPIRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectName)\sdk\Debugger.h" />
@@ -165,10 +163,7 @@
     <ClInclude Include="$(ProjectName)\src\view\impl\DeviceDialog.h" />
     <ClInclude Include="$(ProjectName)\src\view\impl\Dialog.h" />
     <ClInclude Include="$(ProjectName)\src\view\impl\Resources.h" />
-    <ClInclude Include="rsoutput\src\core\impl\wasapi\stdafx.h" />
-    <ClInclude Include="rsoutput\src\core\impl\wasapi\targetver.h" />
     <ClInclude Include="rsoutput\src\core\impl\wasapi\WASAPIDevice.h" />
-    <ClInclude Include="rsoutput\src\core\impl\wasapi\WASAPIRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="$(ProjectName)\src\view\impl\Resources.rc" />

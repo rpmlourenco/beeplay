@@ -14,6 +14,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/* 
+ * https://docs.microsoft.com/en-us/windows/desktop/coreaudio/rendering-a-stream
+ */
+
 #ifndef WASAPIDevice_h
 #define WASAPIDevice_h
 
@@ -23,10 +27,13 @@
 #include "impl/Device.h"
 #include <memory>
 
-#include "stdafx.h"
-
+#include <windows.h>
+#include <strsafe.h>
+#include <objbase.h>
+#include <mmdeviceapi.h>
+#include <audiopolicy.h>
 #include <functiondiscoverykeys.h>
-#include "WASAPIRenderer.h"
+//#include "WASAPIRenderer.h"
 
 //bool DisableMMCSS;
 
@@ -77,22 +84,22 @@ private:
 
 	bool amiopen;
 
-	IMMDevice *device = NULL;
-	CWASAPIRenderer *renderer = NULL;
-	bool isDefaultDevice;
-	ERole role;
+	// REFERENCE_TIME time units per second and per millisecond
+#define REFTIMES_PER_SEC  10000000
+#define REFTIMES_PER_MILLISEC  10000
 
-	int TargetFrequency = 440;
-	int TargetLatency = 50;
-	int TargetDurationInSec = 10;
-	bool UseConsoleDevice = false;
-	bool UseCommunicationsDevice = false;
-	bool UseMultimediaDevice = true;	
-	wchar_t *OutputEndpoint = NULL;
+#define EXIT_ON_ERROR(hres)  \
+              if (FAILED(hres)) { goto Exit; }
+#define SAFE_RELEASE(punk)  \
+              if ((punk) != NULL)  \
+                { (punk)->Release(); (punk) = NULL; }
 
-	bool WASAPIDevice::PickDevice(IMMDevice **DeviceToUse, bool *IsDefaultDevice, ERole *DefaultDeviceRole);
+	const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
+	const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
+	const IID IID_IAudioClient = __uuidof(IAudioClient);
+	const IID IID_IAudioRenderClient = __uuidof(IAudioRenderClient);
 
-	              class RAOPEngine& _raopEngine;
+	class RAOPEngine& _raopEngine;
 	std::auto_ptr<class RTSPClient> _rtspClient;
 
 	volatile float _deviceVolume;

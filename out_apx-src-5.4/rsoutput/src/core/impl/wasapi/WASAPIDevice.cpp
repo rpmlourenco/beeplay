@@ -134,75 +134,6 @@ int WASAPIDevice::test(StreamSocket& socket, const bool firstTime)
 	return 0;
 }
 
-//
-//  Based on the input switches, pick the specified device to use.
-//
-bool WASAPIDevice::PickDevice(IMMDevice **DeviceToUse, bool *IsDefaultDevice, ERole *DefaultDeviceRole)
-{
-	HRESULT hr;
-	bool retValue = true;
-	IMMDeviceEnumerator *deviceEnumerator = NULL;
-	IMMDeviceCollection *deviceCollection = NULL;
-
-	*IsDefaultDevice = false;   // Assume we're not using the default device.
-
-	hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&deviceEnumerator));
-	if (FAILED(hr))
-	{
-		printf("Unable to instantiate device enumerator: %x\n", hr);
-		retValue = false;
-		goto Exit;
-	}
-
-	IMMDevice *ldevice = NULL;
-
-	if (OutputEndpoint != NULL)
-	{
-		hr = deviceEnumerator->GetDevice(OutputEndpoint, &ldevice);
-		if (FAILED(hr))
-		{
-			printf("Unable to get endpoint for endpoint %S: %x\n", OutputEndpoint, hr);
-			retValue = false;
-			goto Exit;
-		}
-	}
-
-	if (ldevice == NULL)
-	{
-		ERole deviceRole = eMultimedia;    // Assume we're using the multimedia role.
-		if (UseConsoleDevice)
-		{
-			deviceRole = eConsole;
-		}
-		else if (UseCommunicationsDevice)
-		{
-			deviceRole = eCommunications;
-		}
-		else if (UseMultimediaDevice)
-		{
-			deviceRole = eMultimedia;
-		}
-		hr = deviceEnumerator->GetDefaultAudioEndpoint(eRender, deviceRole, &ldevice);
-		if (FAILED(hr))
-		{
-			printf("Unable to get default device for role %d: %x\n", deviceRole, hr);
-			retValue = false;
-			goto Exit;
-		}
-		*IsDefaultDevice = true;
-		*DefaultDeviceRole = deviceRole;
-	}
-
-	*DeviceToUse = ldevice;
-	retValue = true;
-Exit:
-	SafeRelease(&deviceCollection);
-	SafeRelease(&deviceEnumerator);
-
-	return retValue;
-}
-
-
 /**
  * Opens session with remote speakers on specified socket.
  *
@@ -215,32 +146,56 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 
 	Debugger::printf("Opening WASAPI device");
 
-	//
-	//  A GUI application should use COINIT_APARTMENTTHREADED instead of COINIT_MULTITHREADED.
-	//
-	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-	if (FAILED(hr))
-	{
-		printf("Unable to initialize COM: %x\n", hr);
-		result = hr;
-		goto Exit;
-	}
+	HRESULT hr;
+	REFERENCE_TIME hnsRequestedDuration = REFTIMES_PER_SEC;
+	REFERENCE_TIME hnsActualDuration;
+	IMMDeviceEnumerator *pEnumerator = NULL;
+	IMMDevice *pDevice = NULL;
+	IAudioClient *pAudioClient = NULL;
+	IAudioRenderClient *pRenderClient = NULL;
+	WAVEFORMATEX *pwfx = NULL;
+	UINT32 bufferFrameCount;
+	UINT32 numFramesAvailable;
+	UINT32 numFramesPadding;
+	BYTE *pData;
+	DWORD flags = 0;
 
-	//
-	//  Pick the device to render.
-	//
-	if (!PickDevice(&device, &isDefaultDevice, &role))
-	{
-		result = -1;
-		goto Exit;
-	}
+	hr = CoCreateInstance(CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&pEnumerator);
+	EXIT_ON_ERROR(hr)
 
-	renderer = new (std::nothrow) CWASAPIRenderer(device, isDefaultDevice, role);
-	if (renderer == NULL)
-	{
-		printf("Unable to allocate renderer\n");
-		return -1;
-	}
+	hr = pEnumerator->GetDefaultAudioEndpoint(eRender, eMultimedia, &pDevice);
+	EXIT_ON_ERROR(hr)
+
+	hr = pDevice->Activate(IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&pAudioClient);
+	EXIT_ON_ERROR(hr)
+
+	hr = pAudioClient->GetMixFormat(&pwfx);
+	EXIT_ON_ERROR(hr)
+
+	hr = pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, hnsRequestedDuration, 0, pwfx, NULL);
+	EXIT_ON_ERROR(hr)
+
+	// Tell the audio source which format to use.
+	//hr = pMySource->SetFormat(pwfx);
+	//EXIT_ON_ERROR(hr)
+
+	// Get the actual size of the allocated buffer.
+	hr = pAudioClient->GetBufferSize(&bufferFrameCount);
+	EXIT_ON_ERROR(hr)
+
+	hr = pAudioClient->GetService(IID_IAudioRenderClient, (void**)&pRenderClient);
+	EXIT_ON_ERROR(hr)
+
+	// Grab the entire buffer for the initial fill operation.
+	//hr = pRenderClient->GetBuffer(bufferFrameCount, &pData);
+	//EXIT_ON_ERROR(hr)
+
+	// Load the initial data into the shared buffer.
+	//hr = pMySource->LoadData(bufferFrameCount, pData, &flags);
+	//EXIT_ON_ERROR(hr)
+
+	//hr = pRenderClient->ReleaseBuffer(bufferFrameCount, flags);
+	//EXIT_ON_ERROR(hr)
 
 	/*
 	const IPAddress remoteHost = socket.peerAddress().host();
@@ -282,26 +237,26 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 	{
 		return returnCode;
 	}
-
-	_raopEngine.attach(this);
 	*/
+	_raopEngine.attach(this);
+	
 	amiopen = true;
-	return 0;
+	return result;
 
 Exit:
-	SafeRelease(&device);
-	CoUninitialize();
-	return 0;
+	CoTaskMemFree(pwfx);
+	SAFE_RELEASE(pEnumerator)
+	SAFE_RELEASE(pDevice)
+	SAFE_RELEASE(pAudioClient)
+	SAFE_RELEASE(pRenderClient)
+
+	return hr;
 }
 
 
 void WASAPIDevice::close()
 {
-	renderer->Shutdown();
-	SafeRelease(&renderer);
-
-	SafeRelease(&device);
-	CoUninitialize();
+	_raopEngine.detach(this);
 
 	amiopen = false;
 	/*

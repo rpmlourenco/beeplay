@@ -668,6 +668,18 @@ void RAOPEngine::detach(RAOPDevice* const raopDevice)
 	}
 }
 
+void RAOPEngine::attach(WASAPIDevice* const wasapiDevice)
+{
+	_wasapiDevice = wasapiDevice;
+}
+
+
+void RAOPEngine::detach(WASAPIDevice* const wasapiDevice)
+{
+	_wasapiDevice = NULL;
+
+}
+
 
 void RAOPEngine::start()
 {

@@ -23,6 +23,7 @@
 #include "Platform.h"
 #include "RAOPDefs.h"
 #include "RAOPDevice.h"
+#include "..\wasapi\WASAPIDevice.h"
 #include "Uncopyable.h"
 #include "impl/OutputObserver.h"
 #include "impl/OutputSink.h"
@@ -49,6 +50,7 @@ class RAOPEngine
 	private Uncopyable
 {
 	friend RAOPDevice;
+	friend WASAPIDevice;
 
 public:
 	static const OutputFormat& outputFormat();
@@ -80,6 +82,9 @@ public:
 private:
 	void attach(class RAOPDevice*);
 	void detach(class RAOPDevice*);
+
+	void attach(class WASAPIDevice*);
+	void detach(class WASAPIDevice*);
 
 	void start();
 	void stop();
@@ -149,6 +154,8 @@ private:
 
 	typedef std::list<class RAOPDevice*> RAOPDeviceList;
 	RAOPDeviceList _raopDevices;
+
+	WASAPIDevice *_wasapiDevice = NULL;
 
 	mutable Poco::FastMutex _mutex;
 	typedef const Poco::FastMutex::ScopedLock ScopedLock;
