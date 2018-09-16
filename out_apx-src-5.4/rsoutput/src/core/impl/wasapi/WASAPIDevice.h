@@ -23,6 +23,12 @@
 #include "impl/Device.h"
 #include <memory>
 
+#include "stdafx.h"
+
+#include <functiondiscoverykeys.h>
+#include "WASAPIRenderer.h"
+
+//bool DisableMMCSS;
 
 class WASAPIDevice
 :
@@ -70,6 +76,22 @@ public:
 private:
 
 	bool amiopen;
+
+	IMMDevice *device = NULL;
+	CWASAPIRenderer *renderer = NULL;
+	bool isDefaultDevice;
+	ERole role;
+
+	int TargetFrequency = 440;
+	int TargetLatency = 50;
+	int TargetDurationInSec = 10;
+	bool UseConsoleDevice = false;
+	bool UseCommunicationsDevice = false;
+	bool UseMultimediaDevice = true;	
+	wchar_t *OutputEndpoint = NULL;
+
+	bool WASAPIDevice::PickDevice(IMMDevice **DeviceToUse, bool *IsDefaultDevice, ERole *DefaultDeviceRole);
+
 	              class RAOPEngine& _raopEngine;
 	std::auto_ptr<class RTSPClient> _rtspClient;
 

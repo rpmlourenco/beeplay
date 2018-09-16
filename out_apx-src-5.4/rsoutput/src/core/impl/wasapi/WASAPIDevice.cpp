@@ -134,6 +134,74 @@ int WASAPIDevice::test(StreamSocket& socket, const bool firstTime)
 	return 0;
 }
 
+//
+//  Based on the input switches, pick the specified device to use.
+//
+bool WASAPIDevice::PickDevice(IMMDevice **DeviceToUse, bool *IsDefaultDevice, ERole *DefaultDeviceRole)
+{
+	HRESULT hr;
+	bool retValue = true;
+	IMMDeviceEnumerator *deviceEnumerator = NULL;
+	IMMDeviceCollection *deviceCollection = NULL;
+
+	*IsDefaultDevice = false;   // Assume we're not using the default device.
+
+	hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&deviceEnumerator));
+	if (FAILED(hr))
+	{
+		printf("Unable to instantiate device enumerator: %x\n", hr);
+		retValue = false;
+		goto Exit;
+	}
+
+	IMMDevice *ldevice = NULL;
+
+	if (OutputEndpoint != NULL)
+	{
+		hr = deviceEnumerator->GetDevice(OutputEndpoint, &ldevice);
+		if (FAILED(hr))
+		{
+			printf("Unable to get endpoint for endpoint %S: %x\n", OutputEndpoint, hr);
+			retValue = false;
+			goto Exit;
+		}
+	}
+
+	if (ldevice == NULL)
+	{
+		ERole deviceRole = eMultimedia;    // Assume we're using the multimedia role.
+		if (UseConsoleDevice)
+		{
+			deviceRole = eConsole;
+		}
+		else if (UseCommunicationsDevice)
+		{
+			deviceRole = eCommunications;
+		}
+		else if (UseMultimediaDevice)
+		{
+			deviceRole = eMultimedia;
+		}
+		hr = deviceEnumerator->GetDefaultAudioEndpoint(eRender, deviceRole, &ldevice);
+		if (FAILED(hr))
+		{
+			printf("Unable to get default device for role %d: %x\n", deviceRole, hr);
+			retValue = false;
+			goto Exit;
+		}
+		*IsDefaultDevice = true;
+		*DefaultDeviceRole = deviceRole;
+	}
+
+	*DeviceToUse = ldevice;
+	retValue = true;
+Exit:
+	SafeRelease(&deviceCollection);
+	SafeRelease(&deviceEnumerator);
+
+	return retValue;
+}
+
 
 /**
  * Opens session with remote speakers on specified socket.
@@ -143,8 +211,37 @@ int WASAPIDevice::test(StreamSocket& socket, const bool firstTime)
  */
 int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 {
+	int result = 0;
 
 	Debugger::printf("Opening WASAPI device");
+
+	//
+	//  A GUI application should use COINIT_APARTMENTTHREADED instead of COINIT_MULTITHREADED.
+	//
+	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	if (FAILED(hr))
+	{
+		printf("Unable to initialize COM: %x\n", hr);
+		result = hr;
+		goto Exit;
+	}
+
+	//
+	//  Pick the device to render.
+	//
+	if (!PickDevice(&device, &isDefaultDevice, &role))
+	{
+		result = -1;
+		goto Exit;
+	}
+
+	renderer = new (std::nothrow) CWASAPIRenderer(device, isDefaultDevice, role);
+	if (renderer == NULL)
+	{
+		printf("Unable to allocate renderer\n");
+		return -1;
+	}
+
 	/*
 	const IPAddress remoteHost = socket.peerAddress().host();
 
@@ -190,11 +287,22 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 	*/
 	amiopen = true;
 	return 0;
+
+Exit:
+	SafeRelease(&device);
+	CoUninitialize();
+	return 0;
 }
 
 
 void WASAPIDevice::close()
 {
+	renderer->Shutdown();
+	SafeRelease(&renderer);
+
+	SafeRelease(&device);
+	CoUninitialize();
+
 	amiopen = false;
 	/*
 	_audioLatency = 0;
