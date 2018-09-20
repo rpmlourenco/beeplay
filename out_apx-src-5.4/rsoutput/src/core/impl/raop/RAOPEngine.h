@@ -24,6 +24,7 @@
 #include "RAOPDefs.h"
 #include "RAOPDevice.h"
 #include "..\wasapi\WASAPIDevice.h"
+#include "..\wasapi\WASAPIBuffer.h"
 #include "Uncopyable.h"
 #include "impl/OutputObserver.h"
 #include "impl/OutputSink.h"
@@ -41,6 +42,7 @@
 #include <Poco/Net/SocketAddress.h>
 #include <Poco/Net/SocketNotification.h>
 #include <Poco/Net/SocketReactor.h>
+#include <samplerate.h>
 
 
 class RAOPEngine
@@ -115,6 +117,7 @@ private:
 	/** RTP audio data packets */
 	PacketBuffer _rtpDataSecured;
 	PacketBuffer _rtpDataUnsecured;
+	WASAPIBuffer _wasapiData;
 
 	/** RTP packet sequence number */
 	uint16_t _rtpSeqNumIncoming;
@@ -132,6 +135,7 @@ private:
 
 	bool _isFirstDataPacket;
 	bool _isFirstSyncPacket;
+	bool _isFirstWasapiPacket;
 	Poco::Timestamp _firstDataTime;
 	Poco::Timestamp _lastClockSyncTime;
 	Poco::Timestamp _lastStreamSyncTime;

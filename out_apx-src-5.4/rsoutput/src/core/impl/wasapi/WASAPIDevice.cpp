@@ -148,17 +148,15 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 
 	HRESULT hr;
 	REFERENCE_TIME hnsRequestedDuration = REFTIMES_PER_SEC;
-	REFERENCE_TIME hnsActualDuration;
+	//REFERENCE_TIME hnsActualDuration;
 	IMMDeviceEnumerator *pEnumerator = NULL;
 	IMMDevice *pDevice = NULL;
-	IAudioClient *pAudioClient = NULL;
-	IAudioRenderClient *pRenderClient = NULL;
 	WAVEFORMATEX *pwfx = NULL;
-	UINT32 bufferFrameCount;
-	UINT32 numFramesAvailable;
-	UINT32 numFramesPadding;
-	BYTE *pData;
-	DWORD flags = 0;
+	//UINT32 bufferFrameCount;
+	//UINT32 numFramesAvailable;
+	//UINT32 numFramesPadding;
+	//BYTE *pData;
+	//DWORD flags = 0;
 
 	hr = CoCreateInstance(CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&pEnumerator);
 	EXIT_ON_ERROR(hr)
@@ -175,13 +173,15 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 	hr = pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, hnsRequestedDuration, 0, pwfx, NULL);
 	EXIT_ON_ERROR(hr)
 
+	framesize = pwfx->nBlockAlign;
+
 	// Tell the audio source which format to use.
 	//hr = pMySource->SetFormat(pwfx);
 	//EXIT_ON_ERROR(hr)
 
 	// Get the actual size of the allocated buffer.
-	hr = pAudioClient->GetBufferSize(&bufferFrameCount);
-	EXIT_ON_ERROR(hr)
+	//hr = pAudioClient->GetBufferSize(&bufferFrameCount);
+	//EXIT_ON_ERROR(hr)
 
 	hr = pAudioClient->GetService(IID_IAudioRenderClient, (void**)&pRenderClient);
 	EXIT_ON_ERROR(hr)

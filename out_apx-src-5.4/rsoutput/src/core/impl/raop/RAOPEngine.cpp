@@ -83,6 +83,10 @@ static const size_t RAOP_PACKET_MAX_DATA_SIZE =
 static const size_t RAOP_PACKET_MAX_SIZE =
 	(RTP_DATA_HEADER_SIZE + RAOP_PACKET_MAX_DATA_SIZE + 80 /* <-- ALAC encoder headroom */);
 
+const unsigned int WASAPI_BITS_PER_SAMPLE = 32;
+static const size_t WASAPI_PACKET_MAX_DATA_SIZE =
+	(RAOP_PACKET_MAX_SAMPLES_PER_CHANNEL * (WASAPI_BITS_PER_SAMPLE / 8) * RAOP_CHANNEL_COUNT);		
+
 static inline AudioFormatDescription alac_in_format()
 {
 	AudioFormatDescription afd;
@@ -204,6 +208,7 @@ RAOPEngine::RAOPEngine(OutputObserver& outputObserver)
 	_outputObserver(outputObserver),
 	_rtpDataSecured(RAOP_PACKET_MAX_SIZE, PACKET_BUFFER_COUNT, PACKET_MEMORY_COUNT),
 	_rtpDataUnsecured(RAOP_PACKET_MAX_SIZE, PACKET_BUFFER_COUNT, PACKET_MEMORY_COUNT),
+	_wasapiData(WASAPI_PACKET_MAX_DATA_SIZE, PACKET_BUFFER_COUNT, PACKET_MEMORY_COUNT),
 	_controlRequestHandler(*this, &RAOPEngine::handleControlRequest),
 	_timingRequestHandler(*this, &RAOPEngine::handleTimingRequest),
 	_reactorThread("RAOPEngine.SocketReactor::run"),
@@ -419,9 +424,10 @@ void RAOPEngine::reinit(OutputInterval& outputInterval)
 
 	// reinitialize remaining object state
 	_firstDataTime = _lastClockSyncTime = _lastStreamSyncTime = 0;
-	_isFirstDataPacket = _isFirstSyncPacket = true;
+	_isFirstDataPacket = _isFirstSyncPacket = _isFirstWasapiPacket = true;
 	_rtpDataUnsecured.reset();
 	_rtpDataSecured.reset();
+	_wasapiData.reset();
 	_raopDevices.clear();
 	_samplesWritten = 0;
 
@@ -507,7 +513,8 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 
 	PacketBuffer::Slot& sslotRef = _rtpDataSecured.nextAvailable();
 	PacketBuffer::Slot& uslotRef = _rtpDataUnsecured.nextAvailable();
-	sslotRef.originalSize = uslotRef.originalSize = length;
+	WASAPIBuffer::Slot& wslotRef = _wasapiData.nextAvailable();
+	sslotRef.originalSize = uslotRef.originalSize = wslotRef.originalSize = length;
 
 	DataPacketHeader packetHeader;
 	packetHeader.setMarker(_isFirstDataPacket);
@@ -534,6 +541,16 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 		buffer = (const byte_t*) buf.get();
 		length = RAOP_PACKET_MAX_DATA_SIZE;
 	}
+	
+	// fill in wasapi data
+	std::vector<float> newbuffer(length);
+	src_short_to_float_array((short*)buffer, newbuffer.data(), length);
+	wslotRef.payloadSize = wslotRef.packetSize = length << 1;
+	std::memcpy(wslotRef.packetData, newbuffer.data(), wslotRef.packetSize);
+
+	//const size_t wframeSize = (RAOP_CHANNEL_COUNT * (WASAPI_BITS_PER_SAMPLE / 8));
+	//assert((length / wframeSize) <= std::numeric_limits<uint16_t>::max());
+	//wslotRef.frameCount = uint16_t(length / wframeSize);
 
 	// fill in unsecured packet payload with encoded audio data
 	int32_t dataLength = length;
@@ -628,11 +645,12 @@ void RAOPEngine::reset()
 
 	// reset remaining object state
 	_firstDataTime = _lastClockSyncTime = _lastStreamSyncTime = 0;
-	_isFirstDataPacket = _isFirstSyncPacket = true;
+	_isFirstDataPacket = _isFirstSyncPacket = _isFirstWasapiPacket = true;
 	_rtpSeqNumIncoming = _rtpSeqNumOutgoing;
 	_rtpTimeIncoming = _rtpTimeOutgoing;
 	_rtpDataUnsecured.reset();
 	_rtpDataSecured.reset();
+	_wasapiData.reset();
 	_samplesWritten = 0;
 }
 
@@ -693,6 +711,13 @@ void RAOPEngine::stop()
 {
 	_stopSending = true;
 	_senderThread.join();
+
+	if (_wasapiDevice != NULL) {
+		HRESULT hr;
+		hr = _wasapiDevice->pAudioClient->Stop();
+		if (hr < 0) { Debugger::print("failed stop wasapi device"); }
+	}
+
 }
 
 
@@ -741,6 +766,7 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 {
 	PacketBuffer::Slot& sslotRef = _rtpDataSecured.nextBuffered();
 	PacketBuffer::Slot& uslotRef = _rtpDataUnsecured.nextBuffered();
+	WASAPIBuffer::Slot& wslotRef = _wasapiData.nextBuffered();
 
 	const DataPacketHeader& packetHeader =
 		*reinterpret_cast<DataPacketHeader*>(sslotRef.packetData);
@@ -769,6 +795,33 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 				"Sending data packet %hu to %s",
 				ByteOrder::fromNetwork(packetHeader.seqNum),
 				raopDevice.audioSocketAddr().toString()));
+		}
+	}
+
+	if (_wasapiDevice != NULL) {
+		HRESULT hr;
+		UINT32 bufferFrameCount;
+		//UINT32 numFramesAvailable;
+		//UINT32 numFramesPadding;
+		BYTE *pData;
+		DWORD flags = 0;
+
+		bufferFrameCount = uint16_t(wslotRef.packetSize / _wasapiDevice->framesize);
+
+		// Grab the entire buffer for the initial fill operation.
+		hr = _wasapiDevice->pRenderClient->GetBuffer(bufferFrameCount, &pData);
+		if (hr<0) { Debugger::print("failed get wasapi buffer"); }
+
+		std::memcpy(pData, wslotRef.packetData, wslotRef.packetSize);
+
+		hr = _wasapiDevice->pRenderClient->ReleaseBuffer(bufferFrameCount, flags);
+		if (hr < 0) { Debugger::print("failed release wasapi buffer"); }
+
+		if (_isFirstWasapiPacket)
+		{
+			_isFirstWasapiPacket = false;
+			hr = _wasapiDevice->pAudioClient->Start();
+			if (hr < 0) { Debugger::print("failed start wasapi device"); }
 		}
 	}
 

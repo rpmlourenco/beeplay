@@ -108,6 +108,9 @@
     <ClCompile Include="rsoutput\src\core\impl\wasapi\WASAPIDevice.cpp">
       <Filter>src.core.impl.wasapi</Filter>
     </ClCompile>
+    <ClCompile Include="rsoutput\src\core\impl\wasapi\WASAPIBuffer.cpp">
+      <Filter>src.core.impl.wasapi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectName)\sdk\Debugger.h">
@@ -225,6 +228,9 @@
       <Filter>src.view.impl</Filter>
     </ClInclude>
     <ClInclude Include="rsoutput\src\core\impl\wasapi\WASAPIDevice.h">
+      <Filter>src.core.impl.wasapi</Filter>
+    </ClInclude>
+    <ClInclude Include="rsoutput\src\core\impl\wasapi\WASAPIBuffer.h">
       <Filter>src.core.impl.wasapi</Filter>
     </ClInclude>
   </ItemGroup>

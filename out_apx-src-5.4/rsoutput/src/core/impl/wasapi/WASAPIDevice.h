@@ -80,6 +80,10 @@ public:
 	const Poco::Net::SocketAddress& controlSocketAddr() const;
 	const Poco::Net::SocketAddress& timingSocketAddr() const;
 
+	IAudioClient *pAudioClient = NULL;
+	IAudioRenderClient *pRenderClient = NULL;
+	WORD framesize;
+
 private:
 
 	bool amiopen;
