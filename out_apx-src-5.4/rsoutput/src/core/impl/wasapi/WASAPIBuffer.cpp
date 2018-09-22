@@ -59,7 +59,7 @@ WASAPIBuffer::Slot& WASAPIBuffer::nextAvailable()
 {
 	if (!canWrite())
 	{
-		throw std::logic_error("Can't write at this time");
+		throw std::logic_error("Can't write at this time wasapi buffer");
 	}
 
 	byte_t* const ptr = &_buffer[_bufferWriteIndex];
@@ -86,6 +86,19 @@ WASAPIBuffer::Slot& WASAPIBuffer::nextBuffered()
 	_bufferReadIndex = (_bufferReadIndex + _slotLength) % _buffer.size();
 
 	return *reinterpret_cast<Slot*>(ptr);
+}
+
+
+size_t WASAPIBuffer::getSizeNextBuffered()
+{
+	if (!canRead())
+	{
+		throw std::logic_error("Can't read at this time");
+	}
+
+	byte_t* const ptr = &_buffer[_bufferReadIndex];
+
+	return reinterpret_cast<Slot*>(ptr)->packetSize;
 }
 
 

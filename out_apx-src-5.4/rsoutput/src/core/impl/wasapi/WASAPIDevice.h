@@ -83,6 +83,7 @@ public:
 	IAudioClient *pAudioClient = NULL;
 	IAudioRenderClient *pRenderClient = NULL;
 	WORD framesize;
+	UINT32 bufferFrameSize;
 
 private:
 

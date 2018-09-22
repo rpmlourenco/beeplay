@@ -49,6 +49,7 @@ public:
 	      Slot& nextAvailable();
 	      Slot& nextBuffered();
 	const Slot& prevBuffered(uint16_t tailIndex) const;
+	size_t getSizeNextBuffered();
 
 private:
 	const size_t _slotLength;

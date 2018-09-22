@@ -38,6 +38,7 @@
 #include <Poco/ScopedLock.h>
 #include <Poco/Thread.h>
 #include <Poco/Timestamp.h>
+#include <Poco/Timer.h>
 #include <Poco/Net/DatagramSocket.h>
 #include <Poco/Net/SocketAddress.h>
 #include <Poco/Net/SocketNotification.h>
@@ -164,7 +165,10 @@ private:
 	mutable Poco::FastMutex _mutex;
 	typedef const Poco::FastMutex::ScopedLock ScopedLock;
 	typedef Poco::ScopedLockWithUnlock<Poco::FastMutex> ScopedLockWithUnlock;
-};
 
+	Poco::Timer *_wasapiStarter = NULL;
+	void onTimer(Poco::Timer& timer);
+
+};
 
 #endif // RAOPEngine_h

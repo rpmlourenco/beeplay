@@ -180,8 +180,8 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 	//EXIT_ON_ERROR(hr)
 
 	// Get the actual size of the allocated buffer.
-	//hr = pAudioClient->GetBufferSize(&bufferFrameCount);
-	//EXIT_ON_ERROR(hr)
+	hr = pAudioClient->GetBufferSize(&bufferFrameSize);
+	EXIT_ON_ERROR(hr)
 
 	hr = pAudioClient->GetService(IID_IAudioRenderClient, (void**)&pRenderClient);
 	EXIT_ON_ERROR(hr)
@@ -358,6 +358,9 @@ void WASAPIDevice::setVolume(const float absolute, const float relative)
 
 void WASAPIDevice::flush()
 {
+	HRESULT hr;
+	hr = pAudioClient->Reset();
+	if (hr < 0) { Debugger::print("failed wasapi reset"); }
 	/*
 	assert(_rtspClient.get() != NULL && _rtspClient->isReady());
 	_rtspClient->doFlush(_raopEngine._rtpSeqNumOutgoing, _raopEngine._rtpTimeOutgoing);

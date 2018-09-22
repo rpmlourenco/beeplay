@@ -72,6 +72,10 @@ static const uint16_t LOCAL_TIMING_PORT = 6002;
 static const uint16_t PACKET_BUFFER_COUNT = 250;
 static const uint16_t PACKET_MEMORY_COUNT = 500;
 
+static const uint16_t WASAPI_BUFFER_COUNT = 2000;
+static const uint16_t WASAPI_MEMORY_COUNT = 4000;
+
+
 const unsigned int RAOP_PACKET_MAX_SAMPLES_PER_CHANNEL = 352;
 const unsigned int RAOP_SAMPLES_PER_SECOND = 44100;
 const unsigned int RAOP_BITS_PER_SAMPLE = 16;
@@ -208,7 +212,7 @@ RAOPEngine::RAOPEngine(OutputObserver& outputObserver)
 	_outputObserver(outputObserver),
 	_rtpDataSecured(RAOP_PACKET_MAX_SIZE, PACKET_BUFFER_COUNT, PACKET_MEMORY_COUNT),
 	_rtpDataUnsecured(RAOP_PACKET_MAX_SIZE, PACKET_BUFFER_COUNT, PACKET_MEMORY_COUNT),
-	_wasapiData(WASAPI_PACKET_MAX_DATA_SIZE, PACKET_BUFFER_COUNT, PACKET_MEMORY_COUNT),
+	_wasapiData(WASAPI_PACKET_MAX_DATA_SIZE, WASAPI_BUFFER_COUNT, WASAPI_MEMORY_COUNT),
 	_controlRequestHandler(*this, &RAOPEngine::handleControlRequest),
 	_timingRequestHandler(*this, &RAOPEngine::handleTimingRequest),
 	_reactorThread("RAOPEngine.SocketReactor::run"),
@@ -643,6 +647,10 @@ void RAOPEngine::reset()
 	// remove closed devices from the list
 	_raopDevices.remove_if(isClosedOrUnresponsive());
 
+	if (_wasapiDevice != NULL) {
+		_wasapiDevice->flush();
+	}
+
 	// reset remaining object state
 	_firstDataTime = _lastClockSyncTime = _lastStreamSyncTime = 0;
 	_isFirstDataPacket = _isFirstSyncPacket = _isFirstWasapiPacket = true;
@@ -766,8 +774,7 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 {
 	PacketBuffer::Slot& sslotRef = _rtpDataSecured.nextBuffered();
 	PacketBuffer::Slot& uslotRef = _rtpDataUnsecured.nextBuffered();
-	WASAPIBuffer::Slot& wslotRef = _wasapiData.nextBuffered();
-
+	
 	const DataPacketHeader& packetHeader =
 		*reinterpret_cast<DataPacketHeader*>(sslotRef.packetData);
 
@@ -801,27 +808,43 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 	if (_wasapiDevice != NULL) {
 		HRESULT hr;
 		UINT32 bufferFrameCount;
-		//UINT32 numFramesAvailable;
-		//UINT32 numFramesPadding;
+		int numFramesAvailable;
+		UINT32 numFramesPadding;
 		BYTE *pData;
 		DWORD flags = 0;
 
-		bufferFrameCount = uint16_t(wslotRef.packetSize / _wasapiDevice->framesize);
+		bufferFrameCount = uint16_t(_wasapiData.getSizeNextBuffered() / _wasapiDevice->framesize);
 
-		// Grab the entire buffer for the initial fill operation.
-		hr = _wasapiDevice->pRenderClient->GetBuffer(bufferFrameCount, &pData);
-		if (hr<0) { Debugger::print("failed get wasapi buffer"); }
+		// See how much buffer space is available.
+		hr = _wasapiDevice->pAudioClient->GetCurrentPadding(&numFramesPadding);
+		if (hr < 0) { Debugger::print("failed get wasapi current padding"); }
 
-		std::memcpy(pData, wslotRef.packetData, wslotRef.packetSize);
+		numFramesAvailable = _wasapiDevice->bufferFrameSize - numFramesPadding;
 
-		hr = _wasapiDevice->pRenderClient->ReleaseBuffer(bufferFrameCount, flags);
-		if (hr < 0) { Debugger::print("failed release wasapi buffer"); }
+		if (numFramesAvailable >= bufferFrameCount) {
+
+			WASAPIBuffer::Slot& wslotRef = _wasapiData.nextBuffered();
+
+			// Grab the entire buffer for the initial fill operation.
+			hr = _wasapiDevice->pRenderClient->GetBuffer(bufferFrameCount, &pData);
+			if (hr < 0) { Debugger::print("failed get wasapi buffer"); }
+
+			std::memcpy(pData, wslotRef.packetData, wslotRef.packetSize);
+
+			hr = _wasapiDevice->pRenderClient->ReleaseBuffer(bufferFrameCount, flags);
+			if (hr < 0) { Debugger::print("failed release wasapi buffer"); }
+
+		}
 
 		if (_isFirstWasapiPacket)
 		{
 			_isFirstWasapiPacket = false;
-			hr = _wasapiDevice->pAudioClient->Start();
-			if (hr < 0) { Debugger::print("failed start wasapi device"); }
+			
+			_wasapiStarter = new Poco::Timer(2800, 0);
+			Poco::TimerCallback<RAOPEngine> callback(*this, &RAOPEngine::onTimer);
+			_wasapiStarter->start(callback);
+			//hr = _wasapiDevice->pAudioClient->Start();
+			//if (hr < 0) { Debugger::print("failed start wasapi device"); }
 		}
 	}
 
@@ -837,6 +860,13 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 	_samplesWritten += sslotRef.frameCount;
 
 	return sslotRef.originalSize;
+}
+
+void RAOPEngine::onTimer(Poco::Timer& timer) {
+	HRESULT hr;
+
+	hr = _wasapiDevice->pAudioClient->Start();
+	if (hr < 0) { Debugger::print("failed start wasapi device"); }
 }
 
 
