@@ -590,13 +590,7 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 	{
 		_isFirstDataPacket = false;
 
-		/*
-		long _latency = 2000;
-		_wasapiStarter = new Poco::Timer(_latency, 0);
-		Poco::TimerCallback<RAOPEngine> callback(*this, &RAOPEngine::onTimer);
-		_wasapiStarter->start(callback);
-		Debugger::printf("Scheduled wasapi start with latency = %i", _latency);
-		*/
+		Debugger::printTimestamp(__FUNCTION__);
 
 		// start sending data and sync packets when first data is written
 		start();
@@ -856,10 +850,11 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 		long _latency = 1953;
 		_wasapiStarter = new Poco::Timer(_latency, 0);
 
-		Poco::Timestamp _now;
+		//Poco::Timestamp _now;
 		//const Poco::Timestamp::TimeDiff timediff = _now - currentTime;
-		_measureTimestamp = _now;
+		//_measureTimestamp = _now;
 		//Debugger::printf("Timing firstSend (wasapi schedule) = %8.3f ms ", static_cast<double>(timediff) / 1000.0);
+		Debugger::printTimestamp(__FUNCTION__);
 
 		Poco::TimerCallback<RAOPEngine> callback(*this, &RAOPEngine::onTimer);
 		_wasapiStarter->start(callback);
@@ -884,10 +879,7 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 void RAOPEngine::onTimer(Poco::Timer& timer) {
 	HRESULT hr;
 
-	Poco::Timestamp _now;
-	const Poco::Timestamp::TimeDiff timediff = _now - _measureTimestamp;
-	_measureTimestamp = _now;
-	Debugger::printf("Timing before wasapi start = %8.3f ms ", static_cast<double>(timediff) / 1000.0);
+	Debugger::printTimestamp(__FUNCTION__);
 
 	REFERENCE_TIME phnsLatency;
 	hr = _wasapiDevice->pAudioClient->GetStreamLatency(&phnsLatency);
@@ -985,12 +977,6 @@ void RAOPEngine::handleTimingRequest(ReadableNotification*)
 					currentTime - _lastClockSyncTime;
 				const Timestamp::TimeDiff localRecvRemoteSendTimeDiff =
 					currentTime - request.sendTime;
-
-				Debugger::printf("!!!Timing request: "
-					"time between requests = %8.3f ms; "
-					"local recv time - remote send time = %7.3f ms.",
-					static_cast<double>(currentRecvLastRecvTimeDiff) / 1000.0,
-					static_cast<double>(localRecvRemoteSendTimeDiff) / 1000.0);
 
 				if (_abs64(currentRecvLastRecvTimeDiff) > 3333000LL
 					|| (_abs64(localRecvRemoteSendTimeDiff) > 250000LL

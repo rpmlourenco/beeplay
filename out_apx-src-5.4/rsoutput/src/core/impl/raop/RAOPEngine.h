@@ -84,7 +84,7 @@ public:
 
 	Poco::Timer *_wasapiStarter = NULL;
 	void onTimer(Poco::Timer& timer);
-	Poco::Timestamp _measureTimestamp;
+	//Poco::Timestamp _measureTimestamp;
 
 
 private:

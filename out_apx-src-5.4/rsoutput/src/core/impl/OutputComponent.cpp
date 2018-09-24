@@ -94,6 +94,8 @@ OutputComponent::~OutputComponent()
 
 void OutputComponent::open(const OutputFormat& format, const OutputMetadata& metadata)
 {
+	Debugger::printTimestamp(__FUNCTION__);
+
 	Debugger::printf(
 		"Starting playback; sample rate = %i Hz, sample size = %i bits, channel count = %i.",
 		(int) format.sampleRate(), (int) format.sampleSize() * 8, (int) format.channelCount());

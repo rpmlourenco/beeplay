@@ -25,10 +25,33 @@
 #include <Poco/Debugger.h>
 #include <Poco/Exception.h>
 #include <Poco/Format.h>
+#include <Poco\Timestamp.h>
 
 namespace UTF16 = Platform::Charset;
 
 static Debugger::PrintCallback _echo = NULL;
+Poco::Timestamp _firstTimestamp = NULL;
+Poco::Timestamp _lastTimestamp = NULL;
+
+void Debugger::printTimestamp(const std::string& scope) {
+
+	Poco::Timestamp _now;
+	if (_firstTimestamp == NULL) {
+		Debugger::printf(">>> Timing <<< at %s START", scope.data());
+		_firstTimestamp = _now;
+	}
+	else 
+	{
+		const Poco::Timestamp::TimeDiff timediff1 = _now - _firstTimestamp;
+		const Poco::Timestamp::TimeDiff timediff2 = _now - _lastTimestamp;
+		Debugger::printf(">>> Timing <<< at %s + %8.3f ms (%8.3f ms)", 
+			scope.data(), 
+			static_cast<double>(timediff2) / 1000.0, 
+			static_cast<double>(timediff1) / 1000.0);
+	}
+	_lastTimestamp = _now;
+	
+}
 
 
 void Debugger::print(const std::string& msg)

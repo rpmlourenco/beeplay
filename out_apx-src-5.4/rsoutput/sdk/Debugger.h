@@ -24,6 +24,8 @@
 #include <stdio.h>
 
 
+
+
 class RSOUTPUT_API Debugger
 {
 public:
@@ -35,8 +37,11 @@ public:
 	typedef void (*PrintCallback)(const char*);
 	static void setPrintCallback(PrintCallback);
 
+	static void printTimestamp(const std::string& scope);
+
 private:
 	Debugger();
+	
 };
 
 

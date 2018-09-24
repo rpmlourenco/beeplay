@@ -143,6 +143,8 @@ int RAOPDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 {
 	const IPAddress remoteHost = socket.peerAddress().host();
 
+	Debugger::printTimestamp(__FUNCTION__);
+
 	if (_rtspClient.get() == NULL || !_rtspClient->isReady())
 	{
 		_rtspClient.reset(new RTSPClient(socket, _remoteControlId));
@@ -182,6 +184,8 @@ int RAOPDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 	}
 
 	_raopEngine.attach(this);
+
+	Debugger::printTimestamp(__FUNCTION__);
 
 	return 0;
 }
