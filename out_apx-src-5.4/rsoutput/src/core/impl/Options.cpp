@@ -332,6 +332,7 @@ void OptionsUtils::loadOptions(const std::string& iniFilePath)
 			Poco::format("Device%i_Type", index).c_str(), 0, iniFilePath.c_str());
 		switch (type)
 		{
+		case DeviceInfo::WIN:
 		case DeviceInfo::APX:
 		case DeviceInfo::ATV:
 		case DeviceInfo::AVR:

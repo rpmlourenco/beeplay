@@ -27,6 +27,7 @@
 #include <string>
 #include <Poco/ByteOrder.h>
 #include <Poco/Format.h>
+#include <Poco/Timestamp.h>
 
 
 using Poco::ByteOrder;

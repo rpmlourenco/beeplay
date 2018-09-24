@@ -533,6 +533,13 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 	byte_t* const securedPacketPtr = &sslotRef.packetData[RTP_DATA_HEADER_SIZE];
 	byte_t* const unsecuredPacketPtr = &uslotRef.packetData[RTP_DATA_HEADER_SIZE];
 
+	// fill in wasapi data
+	std::vector<float> newbuffer(length);
+	src_short_to_float_array((short*)buffer, newbuffer.data(), length);
+	wslotRef.payloadSize = wslotRef.packetSize = length << 1;
+	std::memcpy(wslotRef.packetData, newbuffer.data(), wslotRef.packetSize);
+
+
 	std::tr1::shared_ptr<void> buf;
 	if (length < RAOP_PACKET_MAX_DATA_SIZE)
 	{
@@ -545,16 +552,6 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 		buffer = (const byte_t*) buf.get();
 		length = RAOP_PACKET_MAX_DATA_SIZE;
 	}
-	
-	// fill in wasapi data
-	std::vector<float> newbuffer(length);
-	src_short_to_float_array((short*)buffer, newbuffer.data(), length);
-	wslotRef.payloadSize = wslotRef.packetSize = length << 1;
-	std::memcpy(wslotRef.packetData, newbuffer.data(), wslotRef.packetSize);
-
-	//const size_t wframeSize = (RAOP_CHANNEL_COUNT * (WASAPI_BITS_PER_SAMPLE / 8));
-	//assert((length / wframeSize) <= std::numeric_limits<uint16_t>::max());
-	//wslotRef.frameCount = uint16_t(length / wframeSize);
 
 	// fill in unsecured packet payload with encoded audio data
 	int32_t dataLength = length;
@@ -592,6 +589,14 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 	if (_isFirstDataPacket)
 	{
 		_isFirstDataPacket = false;
+
+		/*
+		long _latency = 2000;
+		_wasapiStarter = new Poco::Timer(_latency, 0);
+		Poco::TimerCallback<RAOPEngine> callback(*this, &RAOPEngine::onTimer);
+		_wasapiStarter->start(callback);
+		Debugger::printf("Scheduled wasapi start with latency = %i", _latency);
+		*/
 
 		// start sending data and sync packets when first data is written
 		start();
@@ -778,33 +783,6 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 	const DataPacketHeader& packetHeader =
 		*reinterpret_cast<DataPacketHeader*>(sslotRef.packetData);
 
-	// send data packet to each device
-	for (RAOPDeviceList::const_iterator it = _raopDevices.begin();
-		it != _raopDevices.end(); ++it)
-	{
-		RAOPDevice& raopDevice = **it;
-
-		try
-		{
-			if (raopDevice.isOpen())
-			{
-				sendTo(_dataSocket,
-					raopDevice.audioSocketAddr(),
-					raopDevice.secureDataStream()
-						? sslotRef.packetData
-						: uslotRef.packetData,
-					sslotRef.packetSize);
-			}
-		}
-		catch (const std::exception& ex)
-		{
-			Debugger::printException(ex, Poco::format(
-				"Sending data packet %hu to %s",
-				ByteOrder::fromNetwork(packetHeader.seqNum),
-				raopDevice.audioSocketAddr().toString()));
-		}
-	}
-
 	if (_wasapiDevice != NULL) {
 		HRESULT hr;
 		UINT32 bufferFrameCount;
@@ -836,16 +814,57 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 
 		}
 
-		if (_isFirstWasapiPacket)
+	}
+
+	// send data packet to each device
+	for (RAOPDeviceList::const_iterator it = _raopDevices.begin();
+		it != _raopDevices.end(); ++it)
+	{
+		RAOPDevice& raopDevice = **it;
+
+		try
 		{
-			_isFirstWasapiPacket = false;
-			
-			_wasapiStarter = new Poco::Timer(2800, 0);
-			Poco::TimerCallback<RAOPEngine> callback(*this, &RAOPEngine::onTimer);
-			_wasapiStarter->start(callback);
-			//hr = _wasapiDevice->pAudioClient->Start();
-			//if (hr < 0) { Debugger::print("failed start wasapi device"); }
+			if (raopDevice.isOpen())
+			{
+				sendTo(_dataSocket,
+					raopDevice.audioSocketAddr(),
+					raopDevice.secureDataStream()
+						? sslotRef.packetData
+						: uslotRef.packetData,
+					sslotRef.packetSize);
+			}
 		}
+		catch (const std::exception& ex)
+		{
+			Debugger::printException(ex, Poco::format(
+				"Sending data packet %hu to %s",
+				ByteOrder::fromNetwork(packetHeader.seqNum),
+				raopDevice.audioSocketAddr().toString()));
+		}
+	}
+
+	if (_wasapiDevice != NULL && _isFirstWasapiPacket)
+	{
+		_isFirstWasapiPacket = false;
+
+		//REFERENCE_TIME phnsLatency;
+		//_wasapiDevice->pAudioClient->GetStreamLatency(&phnsLatency);
+		//Debugger::printf("buffer latency = %d", samplesToMilliseconds(PACKET_BUFFER_COUNT * RAOP_PACKET_MAX_SAMPLES_PER_CHANNEL));
+		//Debugger::printf("device latency = %d", samplesToMilliseconds(_audioLatency));
+
+		
+		long _latency = 1953;
+		_wasapiStarter = new Poco::Timer(_latency, 0);
+
+		Poco::Timestamp _now;
+		//const Poco::Timestamp::TimeDiff timediff = _now - currentTime;
+		_measureTimestamp = _now;
+		//Debugger::printf("Timing firstSend (wasapi schedule) = %8.3f ms ", static_cast<double>(timediff) / 1000.0);
+
+		Poco::TimerCallback<RAOPEngine> callback(*this, &RAOPEngine::onTimer);
+		_wasapiStarter->start(callback);
+		Debugger::printf("Scheduled wasapi start with latency = %i", _latency);		
+
 	}
 
 	// check for indicator of first data packet in stream
@@ -865,8 +884,18 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 void RAOPEngine::onTimer(Poco::Timer& timer) {
 	HRESULT hr;
 
+	Poco::Timestamp _now;
+	const Poco::Timestamp::TimeDiff timediff = _now - _measureTimestamp;
+	_measureTimestamp = _now;
+	Debugger::printf("Timing before wasapi start = %8.3f ms ", static_cast<double>(timediff) / 1000.0);
+
+	REFERENCE_TIME phnsLatency;
+	hr = _wasapiDevice->pAudioClient->GetStreamLatency(&phnsLatency);
+	Debugger::printf("Wasapi latency = %i ms ", phnsLatency);
+
 	hr = _wasapiDevice->pAudioClient->Start();
 	if (hr < 0) { Debugger::print("failed start wasapi device"); }
+
 }
 
 
@@ -956,6 +985,12 @@ void RAOPEngine::handleTimingRequest(ReadableNotification*)
 					currentTime - _lastClockSyncTime;
 				const Timestamp::TimeDiff localRecvRemoteSendTimeDiff =
 					currentTime - request.sendTime;
+
+				Debugger::printf("!!!Timing request: "
+					"time between requests = %8.3f ms; "
+					"local recv time - remote send time = %7.3f ms.",
+					static_cast<double>(currentRecvLastRecvTimeDiff) / 1000.0,
+					static_cast<double>(localRecvRemoteSendTimeDiff) / 1000.0);
 
 				if (_abs64(currentRecvLastRecvTimeDiff) > 3333000LL
 					|| (_abs64(localRecvRemoteSendTimeDiff) > 250000LL

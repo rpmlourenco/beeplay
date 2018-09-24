@@ -82,6 +82,7 @@ public:
 
 	IAudioClient *pAudioClient = NULL;
 	IAudioRenderClient *pRenderClient = NULL;
+	ISimpleAudioVolume *pSimpleAudioVolume = NULL;
 	WORD framesize;
 	UINT32 bufferFrameSize;
 
@@ -103,6 +104,7 @@ private:
 	const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
 	const IID IID_IAudioClient = __uuidof(IAudioClient);
 	const IID IID_IAudioRenderClient = __uuidof(IAudioRenderClient);
+	const IID IID_ISimpleAudioVolume = __uuidof(ISimpleAudioVolume);
 
 	class RAOPEngine& _raopEngine;
 	std::auto_ptr<class RTSPClient> _rtspClient;

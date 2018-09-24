@@ -186,6 +186,9 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 	hr = pAudioClient->GetService(IID_IAudioRenderClient, (void**)&pRenderClient);
 	EXIT_ON_ERROR(hr)
 
+	hr = pAudioClient->GetService(IID_ISimpleAudioVolume, (void**)&pSimpleAudioVolume);
+	EXIT_ON_ERROR(hr)
+
 	// Grab the entire buffer for the initial fill operation.
 	//hr = pRenderClient->GetBuffer(bufferFrameCount, &pData);
 	//EXIT_ON_ERROR(hr)
@@ -320,6 +323,10 @@ void WASAPIDevice::putVolume(const float volume)
 {
 	Debugger::printf("[%s] old device volume: %f, new device volume: %f", __FUNCTION__, _deviceVolume, volume);
 
+	_deviceVolume = std::min(std::max(volume, -100.0f), 0.0f);
+	pSimpleAudioVolume->SetMasterVolume(volume, NULL);
+
+
 	/*
 	_deviceVolume = std::min(std::max(volume, -100.0f), 0.0f);
 
@@ -332,7 +339,7 @@ void WASAPIDevice::putVolume(const float volume)
 
 void WASAPIDevice::setVolume(const float absolute, const float relative)
 {
-	/*
+	
 	Debugger::printf("[%s] device volume: %f, old master volume: %f, new master volume: %f", __FUNCTION__, _deviceVolume, absolute - relative, absolute);
 
 	if ((_deviceVolume == 0.0f && relative == 0.0f)
@@ -350,9 +357,15 @@ void WASAPIDevice::setVolume(const float absolute, const float relative)
 	if (decibels > 0.0f) decibels = 0.0f;
 	if (decibels <= -100.0f) decibels = -144.0f;
 
+	float _lvolume((_deviceVolume + 40) * 0.025f);
+	pSimpleAudioVolume->SetMasterVolume(_lvolume, NULL);
+	Debugger::printf("[%s] new device volume: %f", __FUNCTION__, _lvolume);
+
+	/*
 	assert(_rtspClient.get() != NULL && _rtspClient->isReady());
 	_rtspClient->doSetParameter("volume", Poco::format("%hf", decibels));
 	*/
+	
 }
 
 

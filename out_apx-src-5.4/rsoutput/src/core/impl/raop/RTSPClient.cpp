@@ -600,6 +600,8 @@ int RTSPClient::doRecord(
 
 		// parse audio latency header
 		audioLatency = NumberParser::parseDecimalIntegerTo<unsigned int>(audioLatencyHeader);
+
+		Debugger::printf("DoRecord latency = %i", audioLatency);
 	}
 
 	// indicate that teardown is required on disconnect because record message

@@ -82,6 +82,11 @@ public:
 	void flush();
 	void reset();
 
+	Poco::Timer *_wasapiStarter = NULL;
+	void onTimer(Poco::Timer& timer);
+	Poco::Timestamp _measureTimestamp;
+
+
 private:
 	void attach(class RAOPDevice*);
 	void detach(class RAOPDevice*);
@@ -165,9 +170,6 @@ private:
 	mutable Poco::FastMutex _mutex;
 	typedef const Poco::FastMutex::ScopedLock ScopedLock;
 	typedef Poco::ScopedLockWithUnlock<Poco::FastMutex> ScopedLockWithUnlock;
-
-	Poco::Timer *_wasapiStarter = NULL;
-	void onTimer(Poco::Timer& timer);
 
 };
 
