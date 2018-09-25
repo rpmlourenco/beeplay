@@ -129,7 +129,8 @@ void ConnectDialogImpl::onInitialize()
 	assert(returnCode != 0);
 
 	// start timer to facilitate showing dialog and updating progress bar
-	if (SetTimer(_dialogWindow, (UINT_PTR) this, 250, NULL) < 1)
+	// RML update 250 to 1000
+	if (SetTimer(_dialogWindow, (UINT_PTR) this, 1000, NULL) < 1)
 	{
 		Debugger::printLastError("SetTimer", __FILE__, __LINE__);
 	}

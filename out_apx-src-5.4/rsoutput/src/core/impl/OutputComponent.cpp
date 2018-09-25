@@ -405,7 +405,8 @@ void OutputComponentImpl::run()
 
 			// check for long pause with output devices open
 			pausedCount = (_paused && _deviceManager.isAnyDeviceOpen(false) ? pausedCount + 1 : 0);
-			if (pausedCount * SLEEP_MSEC >= 8000)
+			// RML changed from 8 seconds to 16
+			if (pausedCount * SLEEP_MSEC >= 16000)
 			{
 				// close output devices when player has been paused or stopped
 				// for at least eight seconds
