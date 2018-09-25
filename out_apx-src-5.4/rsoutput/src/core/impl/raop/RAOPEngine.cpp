@@ -542,6 +542,7 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 	// copy audio data to wasapi packet buffer
 	wslotRef.payloadSize = wslotRef.packetSize = length << 1;	
 	std::memcpy(wslotRef.packetData, x, wslotRef.packetSize);
+	free(x);
 
 	//std::vector<float> newbuffer(length >> 1);
 	//src_short_to_float_array((short*)buffer, newbuffer.data(), length >> 1);
