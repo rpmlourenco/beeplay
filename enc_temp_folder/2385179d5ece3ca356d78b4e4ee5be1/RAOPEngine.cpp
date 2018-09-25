@@ -533,14 +533,11 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 	byte_t* const securedPacketPtr = &sslotRef.packetData[RTP_DATA_HEADER_SIZE];
 	byte_t* const unsecuredPacketPtr = &uslotRef.packetData[RTP_DATA_HEADER_SIZE];
 
-	// fill in wasapi data converting from 16-bit PCM to 32-bit float
-	// create temporary float buffer with double the size
+	// fill in wasapi data
+	
 	float *x = (float*)malloc(length << 1);
-	// convert from 16-bit to 32-bit float
-	// size is half because buffer has been cast to short (16-bit)
-	src_short_to_float_array((short*)buffer, x, length >> 1);	
-	// copy audio data to wasapi packet buffer
-	wslotRef.payloadSize = wslotRef.packetSize = length << 1;	
+	src_short_to_float_array((short*)buffer, x, length >> 1);
+	wslotRef.payloadSize = wslotRef.packetSize = length << 1;
 	std::memcpy(wslotRef.packetData, x, wslotRef.packetSize);
 
 	//std::vector<float> newbuffer(length >> 1);

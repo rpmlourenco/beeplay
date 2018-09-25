@@ -80,6 +80,7 @@ OutputComponent::OutputComponent(Player& player)
 :
 	_impl(new OutputComponentImpl(player))
 {
+	_impl->_deviceManager.openDevices();
 	Debugger::print("Initialized remote speakers output component.");
 }
 
@@ -94,11 +95,13 @@ OutputComponent::~OutputComponent()
 
 void OutputComponent::open(const OutputFormat& format, const OutputMetadata& metadata)
 {
-	Debugger::printTimestamp(__FUNCTION__);
+	Debugger::resetTimestamp(__FUNCTION__);
 
 	Debugger::printf(
 		"Starting playback; sample rate = %i Hz, sample size = %i bits, channel count = %i.",
 		(int) format.sampleRate(), (int) format.sampleSize() * 8, (int) format.channelCount());
+
+	Debugger::printf("Size of byte_t = %i, Size of short = %i",sizeof(byte_t), sizeof(short));
 
 	close(); // in case
 
@@ -119,7 +122,6 @@ void OutputComponent::open(const OutputFormat& format, const OutputMetadata& met
 		throw std::exception("deviceManager.openDevices failed");
 	}
 }
-
 
 void OutputComponent::close()
 {

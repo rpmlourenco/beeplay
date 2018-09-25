@@ -37,7 +37,8 @@ public:
 	typedef void (*PrintCallback)(const char*);
 	static void setPrintCallback(PrintCallback);
 
-	static void printTimestamp(const std::string& scope);
+	static void resetTimestamp(const std::string& scope);
+	static void printTimestamp(const std::string& scope, const std::string& auxText = "");
 
 private:
 	Debugger();

@@ -33,7 +33,16 @@ static Debugger::PrintCallback _echo = NULL;
 Poco::Timestamp _firstTimestamp = NULL;
 Poco::Timestamp _lastTimestamp = NULL;
 
-void Debugger::printTimestamp(const std::string& scope) {
+
+void Debugger::resetTimestamp(const std::string& scope)
+{
+	Poco::Timestamp _now;
+	_firstTimestamp = _now;
+	_lastTimestamp = _now;
+	Debugger::printf(">>> Timing <<< at %s START", scope.data());
+}
+
+void Debugger::printTimestamp(const std::string& scope, const std::string& auxText) {
 
 	Poco::Timestamp _now;
 	if (_firstTimestamp == NULL) {
@@ -44,10 +53,19 @@ void Debugger::printTimestamp(const std::string& scope) {
 	{
 		const Poco::Timestamp::TimeDiff timediff1 = _now - _firstTimestamp;
 		const Poco::Timestamp::TimeDiff timediff2 = _now - _lastTimestamp;
-		Debugger::printf(">>> Timing <<< at %s + %8.3f ms (%8.3f ms)", 
-			scope.data(), 
-			static_cast<double>(timediff2) / 1000.0, 
-			static_cast<double>(timediff1) / 1000.0);
+		if (auxText != "") {
+			Debugger::printf(">>> Timing <<< at %s(%s) + %8.3f ms (%8.3f ms)",
+				scope.data(),
+				auxText.data(),
+				static_cast<double>(timediff2) / 1000.0,
+				static_cast<double>(timediff1) / 1000.0);
+		}
+		else {
+			Debugger::printf(">>> Timing <<< at %s + %8.3f ms (%8.3f ms)",
+				scope.data(),
+				static_cast<double>(timediff2) / 1000.0,
+				static_cast<double>(timediff1) / 1000.0);
+		}
 	}
 	_lastTimestamp = _now;
 	
