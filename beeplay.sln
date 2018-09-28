@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "beeplay", "beeplay", "{AE8192A6-6395-46B4-925F-47CA67CC6F33}"
+	ProjectSection(SolutionItems) = preProject
+		README.txt = README.txt
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rsoutput", "out_apx-src-5.4\rsoutput.vcxproj", "{0155CF28-9AB3-40C2-A9BF-8F2F245E52DB}"
 EndProject
@@ -18,6 +21,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Foundation", "poco-1.6.0\Foundation\Foundation_vs120.vcxproj", "{8164D41D-B053-405B-826C-CF37AC0EF176}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Net", "poco-1.6.0\Net\Net_vs120.vcxproj", "{B057A1FE-09F7-465E-B8B5-E1B659051D76}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Util", "poco-1.6.0\Util\Util_vs120.vcxproj", "{6FF56CDB-787A-4714-A28C-919003F9FA6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +66,12 @@ Global
 		{B057A1FE-09F7-465E-B8B5-E1B659051D76}.Release|Win32.ActiveCfg = release_static_mt|Win32
 		{B057A1FE-09F7-465E-B8B5-E1B659051D76}.Release|x64.ActiveCfg = debug_shared|Win32
 		{B057A1FE-09F7-465E-B8B5-E1B659051D76}.Release|x64.Build.0 = debug_shared|Win32
+		{6FF56CDB-787A-4714-A28C-919003F9FA6C}.Debug|Win32.ActiveCfg = debug_static_mt|Win32
+		{6FF56CDB-787A-4714-A28C-919003F9FA6C}.Debug|x64.ActiveCfg = release_static_mt|Win32
+		{6FF56CDB-787A-4714-A28C-919003F9FA6C}.Debug|x64.Build.0 = release_static_mt|Win32
+		{6FF56CDB-787A-4714-A28C-919003F9FA6C}.Release|Win32.ActiveCfg = release_static_mt|Win32
+		{6FF56CDB-787A-4714-A28C-919003F9FA6C}.Release|x64.ActiveCfg = release_static_mt|Win32
+		{6FF56CDB-787A-4714-A28C-919003F9FA6C}.Release|x64.Build.0 = release_static_mt|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +83,7 @@ Global
 		{2AEBCF4F-BB0A-4602-8336-A072AD39F6F6} = {164E8634-3DF2-4B69-8864-8D305B2E07DE}
 		{8164D41D-B053-405B-826C-CF37AC0EF176} = {164E8634-3DF2-4B69-8864-8D305B2E07DE}
 		{B057A1FE-09F7-465E-B8B5-E1B659051D76} = {164E8634-3DF2-4B69-8864-8D305B2E07DE}
+		{6FF56CDB-787A-4714-A28C-919003F9FA6C} = {164E8634-3DF2-4B69-8864-8D305B2E07DE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DE3A347E-D06C-4D3F-AC9B-38DCFE0638A4}

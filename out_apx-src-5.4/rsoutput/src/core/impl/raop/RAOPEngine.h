@@ -44,7 +44,20 @@
 #include <Poco/Net/SocketNotification.h>
 #include <Poco/Net/SocketReactor.h>
 #include <samplerate.h>
+#include <Poco/Util/Timer.h>
+#include <Poco/Util/TimerTask.h>
 
+
+class WASAPITimerTask
+:
+	public Poco::Util::TimerTask
+{
+public:
+	explicit WASAPITimerTask(WASAPIDevice *wasapiDevice);
+private:
+	WASAPIDevice *_wasapiDevice = NULL;	
+	void WASAPITimerTask::run();
+};
 
 class RAOPEngine
 :
@@ -82,10 +95,10 @@ public:
 	void flush();
 	void reset();
 
-	Poco::Timer *_wasapiStarter = NULL;
-	void onTimer(Poco::Timer& timer);
-	//Poco::Timestamp _measureTimestamp;
-
+	//Poco::Timer *_wasapiStarter = NULL;
+	//void onTimer(Poco::Timer& timer);
+	
+	Poco::Util::Timer *_wasapiStarter = NULL;
 
 private:
 	void attach(class RAOPDevice*);

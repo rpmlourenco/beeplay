@@ -31,7 +31,7 @@
     <OutDir>$(ProjectName)\$(Configuration)\</OutDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)bonjour-3.0.0.10\include;$(SolutionDir)libalac-1.0.4p1\LibALAC;$(SolutionDir)libsamplerate-0.1.9\src;$(ProjectDir)rsoutput\include;$(SolutionDir)poco-1.6.0\Foundation\include;$(SolutionDir)poco-1.6.0\Net\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)bonjour-3.0.0.10\include;$(SolutionDir)libalac-1.0.4p1\LibALAC;$(SolutionDir)libsamplerate-0.1.9\src;$(ProjectDir)rsoutput\include;$(SolutionDir)poco-1.6.0\Foundation\include;$(SolutionDir)poco-1.6.0\Net\include;$(SolutionDir)poco-1.6.0\Util\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)libalac-1.0.4p1\$(Configuration);$(SolutionDir)libsamplerate-0.1.9\out\$(Configuration);$(ProjectDir)rsoutput\lib\openssl;$(SolutionDir)poco-1.6.0\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -47,7 +47,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>avrt.lib;winmm.lib;PocoFoundationmtd.lib;PocoNetmtd.lib;LibALAC32.lib;libeay32d.lib;samplerate32.lib;ole32.lib;advapi32.lib;gdi32.lib;iphlpapi.lib;user32.lib;ws2_32.lib;kernel32.lib;winspool.lib;comdlg32.lib;shell32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avrt.lib;winmm.lib;PocoFoundationmtd.lib;PocoNetmtd.lib;PocoUtilmtd.lib;LibALAC32.lib;libeay32d.lib;samplerate32.lib;ole32.lib;advapi32.lib;gdi32.lib;iphlpapi.lib;user32.lib;ws2_32.lib;kernel32.lib;winspool.lib;comdlg32.lib;shell32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -79,7 +79,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>avrt.lib;ole32.lib;advapi32.lib;LibALAC32.lib;gdi32.lib;iphlpapi.lib;legacy_stdio_definitions.lib;libeay32.lib;PocoFoundationmt.lib;PocoNetmt.lib;samplerate32.lib;user32.lib;ws2_32.lib</AdditionalDependencies>
+      <AdditionalDependencies>avrt.lib;ole32.lib;advapi32.lib;LibALAC32.lib;gdi32.lib;iphlpapi.lib;legacy_stdio_definitions.lib;libeay32.lib;PocoFoundationmt.lib;PocoNetmt.lib;PocoUtilmt.lib;samplerate32.lib;user32.lib;ws2_32.lib</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>

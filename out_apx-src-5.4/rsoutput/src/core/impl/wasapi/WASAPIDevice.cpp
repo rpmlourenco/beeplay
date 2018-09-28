@@ -28,7 +28,6 @@
 #include <Poco/ByteOrder.h>
 #include <Poco/Format.h>
 
-
 using Poco::ByteOrder;
 using Poco::Net::IPAddress;
 using Poco::Net::SocketAddress;
@@ -148,6 +147,10 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 
 	HRESULT hr;
 	REFERENCE_TIME hnsRequestedDuration = REFTIMES_PER_SEC;
+	
+	REFERENCE_TIME minTime, maxTime, engineTime;
+	UINT32 min, max, fundamental, default_, current;
+	
 	//REFERENCE_TIME hnsActualDuration;
 	IMMDeviceEnumerator *pEnumerator = NULL;
 	IMMDevice *pDevice = NULL;
@@ -188,6 +191,28 @@ int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 
 	hr = pAudioClient->GetService(IID_ISimpleAudioVolume, (void**)&pSimpleAudioVolume);
 	EXIT_ON_ERROR(hr)
+
+	// find audio latency
+
+	IAudioClient2 *client2 = NULL;
+	IAudioClient3 *client3 = NULL;
+
+	pAudioClient->QueryInterface(&client2);
+	pAudioClient->QueryInterface(&client3);
+
+	hr = client3->GetCurrentSharedModeEnginePeriod(&pwfx, &current);
+	Debugger::printf("GetCurrentSharedModeEnginePeriod: current = %i", current);
+
+	hr = client2->GetBufferSizeLimits(pwfx, TRUE, &minTime, &maxTime);
+	Debugger::printf("GetBufferSizeLimits: minTime = %i, maxTime = %i", minTime, maxTime);
+
+	hr = pAudioClient->GetDevicePeriod(&engineTime, &minTime);
+	Debugger::printf("GetDevicePeriod: engineTime = %i, minTime = %i", engineTime, minTime);
+	_audioLatency = (long)(engineTime / 10.0L);
+
+	hr = client3->GetSharedModeEnginePeriod(pwfx, &default_, &fundamental, &min, &max);
+	Debugger::printf("GetSharedModeEnginePeriod: default_ = %i, fundamental = %i, min = %i, max = %i", default_, fundamental, min, max);
+	
 
 	// Grab the entire buffer for the initial fill operation.
 	//hr = pRenderClient->GetBuffer(bufferFrameCount, &pData);

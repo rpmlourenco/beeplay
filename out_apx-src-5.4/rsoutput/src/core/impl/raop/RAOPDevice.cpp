@@ -164,6 +164,7 @@ int RAOPDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 	// send setup message to remote speakers
 	returnCode = _rtspClient->doSetup(
 		serverPort, controlPort, timingPort, _audioLatency, audioJackStatus);
+	Debugger::printf(">>> Audio Latency Header SETUP = %i", _audioLatency);
 	if (returnCode != RTSP_STATUS_CODE_OK)
 	{
 		return returnCode;
@@ -176,6 +177,7 @@ int RAOPDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 	// send record message to remote speakers
 	returnCode = _rtspClient->doRecord(
 		_raopEngine._rtpSeqNumOutgoing, _raopEngine._rtpTimeOutgoing, _audioLatency);
+	Debugger::printf(">>> Audio Latency Header RECORD = %i samples, %i ms", _audioLatency, _raopEngine.samplesToMilliseconds(_audioLatency));
 	if (returnCode != RTSP_STATUS_CODE_OK)
 	{
 		return returnCode;

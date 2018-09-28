@@ -72,7 +72,7 @@ public:
 	void updateMetadata(const OutputMetadata&);
 	void updateProgress(const OutputInterval&);
 
-	unsigned int audioLatency() const;
+	long audioLatency() const;
 	uint32_t remoteControlId() const;
 	bool secureDataStream() const;
 
@@ -117,8 +117,8 @@ private:
 	/** type(s) of playback metadata the device accepts */
 	byte_t _metadataFlags;
 
-	/** device's audio playback latency (in number of samples) */
-	unsigned int _audioLatency;
+	/** device's audio playback latency (in microseconds) */
+	long _audioLatency;
 
 	/** device's DACP remote control identifier */
 	uint32_t _remoteControlId;
@@ -130,7 +130,7 @@ private:
 };
 
 
-inline unsigned int WASAPIDevice::audioLatency() const
+inline long WASAPIDevice::audioLatency() const
 {
 	return _audioLatency;
 }

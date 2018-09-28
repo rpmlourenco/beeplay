@@ -5,4 +5,9 @@
     <LocalDebuggerWorkingDirectory>..\..\Music Players\MusicBee</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LocalDebuggerCommand>C:\Dev\Music Players\MusicBee\MusicBee.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>..\..\Music Players\MusicBee</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>
