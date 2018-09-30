@@ -63,7 +63,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Message>Deleting $(TargetFileName) from player directory...</Message>
-      <Command>call "$(SolutionDir)\pre-post-commands\pre-build-winamp.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
+      <Command>call "$(SolutionDir)pre-post-commands\pre-build-winamp.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
     </PreBuildEvent>
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectName)\sdk;rsoutput\sdk</AdditionalIncludeDirectories>
@@ -88,7 +88,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Copying $(TargetFileName) to player directory...</Message>
-      <Command>call "$(SolutionDir)\pre-post-commands\post-build-winamp.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
+      <Command>call "$(SolutionDir)pre-post-commands\post-build-winamp.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

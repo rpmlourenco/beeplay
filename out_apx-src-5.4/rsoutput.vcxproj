@@ -86,11 +86,11 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>call "$(SolutionDir)\pre-post-commands\post-build-rsoutput.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
+      <Command>call "$(SolutionDir)pre-post-commands\post-build-rsoutput.bat" "$(SolutionDir)" "$(TargetPath)"</Command>
       <Message>Copying $(TargetFileName) to player directory...</Message>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call "$(SolutionDir)\pre-post-commands\pre-build-rsoutput.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
+      <Command>call "$(SolutionDir)pre-post-commands\pre-build-rsoutput.bat" "$(SolutionDir)" "$(TargetFileName)"</Command>
       <Message>Deleting $(TargetFileName) from player directory...</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
