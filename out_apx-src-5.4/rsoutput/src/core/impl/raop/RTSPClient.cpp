@@ -96,7 +96,7 @@ public:
 	void build(buffer_t& requestData, std::string& requestText, const std::string& requestURI) {
 
 		if (_method == "POST /auth-setup") {
-			requestText.assign(Poco::format("%s RTSP/1.0\r\n", _method, requestURI));
+			requestText.assign(Poco::format("%s RTSP/1.0\r\n", _method));
 		}
 		else {
 			requestText.assign(Poco::format("%s %s RTSP/1.0\r\n", _method, requestURI));
