@@ -334,6 +334,7 @@ void OptionsUtils::loadOptions(const std::string& iniFilePath)
 		{
 		case DeviceInfo::WIN:
 		case DeviceInfo::APX:
+		case DeviceInfo::AP2:
 		case DeviceInfo::ATV:
 		case DeviceInfo::AVR:
 		case DeviceInfo::AFS:

@@ -507,6 +507,9 @@ int OptionsDialogImpl::onDrawItem(LPDRAWITEMSTRUCT drawItemInfo)
 		case DeviceInfo::APX:
 			iconId = ICON_APX;
 			break;
+		case DeviceInfo::AP2:
+			iconId = ICON_APX;
+			break;
 		case DeviceInfo::ATV:
 			iconId = ICON_ATV;
 			break;

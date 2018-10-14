@@ -242,6 +242,10 @@ Device::SharedPtr DeviceManager::createDevice(const DeviceInfo& deviceInfo)
 		return new RAOPDevice(RAOP_ENGINE,
 			RAOPDevice::ET_NONE, RAOPDevice::MD_NONE);
 
+	case DeviceInfo::AP2:
+		return new RAOPDevice(RAOP_ENGINE,
+			RAOPDevice::ET_NONE, RAOPDevice::MD_NONE);
+
 	case DeviceInfo::AS3:
 		return new RAOPDevice(RAOP_ENGINE,
 			RAOPDevice::ET_SECURED, RAOPDevice::MD_NONE);
@@ -398,8 +402,16 @@ void DeviceManager::openDevice(const DeviceInfo& deviceInfo)
 
 				AudioJackStatus audioJackStatus = AUDIO_JACK_CONNECTED;
 
+
 				// negotiate session parameters with remote speakers
-				int returnCode = device->open(socket, audioJackStatus);
+				int returnCode = 0;
+				if (deviceInfo.type() == DeviceInfo::AP2) {
+					returnCode = device->open(socket, audioJackStatus, true);
+				}
+				else 
+				{
+					returnCode = device->open(socket, audioJackStatus, false);
+				}				
 
 				// check if remote speakers require a password
 				while (returnCode == 401)
@@ -424,7 +436,13 @@ void DeviceManager::openDevice(const DeviceInfo& deviceInfo)
 					device->setPassword(options->getPassword(deviceInfo.name()));
 
 					// negotiate session parameters with remote speakers again
-					returnCode = device->open(socket, audioJackStatus);
+					if (deviceInfo.type() == DeviceInfo::AP2) {
+						returnCode = device->open(socket, audioJackStatus, true);
+					}
+					else
+					{
+						returnCode = device->open(socket, audioJackStatus, false);
+					}
 
 					// check if password was not accepted
 					if (returnCode == 401)
@@ -480,7 +498,7 @@ void DeviceManager::openDevice(const DeviceInfo& deviceInfo)
 				//WASAPI device
 				StreamSocket& dummySocket = *new(StreamSocket);
 				AudioJackStatus audioJackStatus = AUDIO_JACK_CONNECTED;
-				int returnCode = device->open(dummySocket, audioJackStatus);
+				int returnCode = device->open(dummySocket, audioJackStatus, false);
 				if (!returnCode) {
 					Debugger::printf("Opened WASAPI device");
 				}

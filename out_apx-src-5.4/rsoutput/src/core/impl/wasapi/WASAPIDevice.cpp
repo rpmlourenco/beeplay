@@ -139,7 +139,7 @@ int WASAPIDevice::test(StreamSocket& socket, const bool firstTime)
  * @param audioJackStatus [out] status of remote speakers audio jack
  * @return zero on success; non-zero on failure
  */
-int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
+int WASAPIDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus, bool authRequest)
 {
 	int result = 0;
 

@@ -47,7 +47,7 @@ public:
 	virtual ~Device();
 
 	virtual int test(Poco::Net::StreamSocket&, bool firstTime) = 0;
-	virtual int open(Poco::Net::StreamSocket&, AudioJackStatus&) = 0;
+	virtual int open(Poco::Net::StreamSocket&, AudioJackStatus&, bool authRequest) = 0;
 	virtual bool isOpen(bool pollConnection = true) const = 0;
 	virtual void close() = 0;
 

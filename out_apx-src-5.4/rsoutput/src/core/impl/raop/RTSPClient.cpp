@@ -94,7 +94,13 @@ public:
 	}
 
 	void build(buffer_t& requestData, std::string& requestText, const std::string& requestURI) {
-		requestText.assign(Poco::format("%s %s RTSP/1.0\r\n", _method, requestURI));
+
+		if (_method == "POST /auth-setup") {
+			requestText.assign(Poco::format("%s RTSP/1.0\r\n", _method, requestURI));
+		}
+		else {
+			requestText.assign(Poco::format("%s %s RTSP/1.0\r\n", _method, requestURI));
+		}		
 
 		typedef std::map<std::string, std::string>::const_iterator headers_iterator;
 		for (headers_iterator it = _headers.begin(); it != _headers.end(); ++it) {
@@ -419,6 +425,33 @@ int RTSPClient::doOptions(void* const rsaKey)
 			return -200004;
 		}
 	}
+
+	return response.statusCode();
+}
+
+
+/**
+ * Performs Auth-setup needed for Airplay2
+ *
+ * @return response status code (positive)
+ */
+int RTSPClient::doAuthSetup()
+{
+	// generate local session identifier
+	Random::fill(&_impl->_localSessionId, sizeof(uint32_t));
+
+	// x01 Flag for no encryption. 0x10 may mean encryption.
+	// raop_auth_setup_pubkey https://github.com/ejurgensen/forked-daapd/commit/a29772e8be962d1388d0403a36a94557b57334f9
+	uint8_t raop_auth_setup_pubkey[] =
+		"\x01" 
+		"\x59\x02\xed\xe9\x0d\x4e\xf2\xbd\x4c\xb6\x8a\x63\x30\x03\x82\x07"
+		"\xa9\x4d\xbd\x50\xd8\xaa\x46\x5b\x5d\x8c\x01\x2a\x0c\x7e\x1d\x4e";
+
+	std::string requestBody(reinterpret_cast<char*>(raop_auth_setup_pubkey), 33);
+
+	RTSPRequest request("POST /auth-setup");
+	request.setBody(requestBody, "application/octet-stream");
+	RTSPResponse response(_impl->sendRequestReceiveResponse(request));
 
 	return response.statusCode();
 }

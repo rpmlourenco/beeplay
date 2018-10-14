@@ -38,6 +38,7 @@ public:
 	void setPassword(const std::string&);
 
 	int doOptions(void* rsaKey);
+	int doAuthSetup();
 	int doAnnounce(const std::string& aesKey, const std::string& aesIV);
 	int doSetup(uint16_t& serverPort, uint16_t& controlPort, uint16_t& timingPort,
 		unsigned int& audioLatency, AudioJackStatus&);

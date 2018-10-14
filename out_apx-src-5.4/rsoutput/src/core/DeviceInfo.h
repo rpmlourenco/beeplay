@@ -36,6 +36,7 @@ public:
 		AFS = 4, // Airfoil Speakers
 		AS3 = 5, // AirServer Classic
 		AS4 = 6, // AirServer
+		AP2 = 7, // AirPort Express (airplay 2)
 		ANY = 99 // Other
 	};
 

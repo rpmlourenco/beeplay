@@ -139,7 +139,7 @@ int RAOPDevice::test(StreamSocket& socket, const bool firstTime)
  * @param audioJackStatus [out] status of remote speakers audio jack
  * @return zero on success; non-zero on failure
  */
-int RAOPDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
+int RAOPDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus, bool authRequest)
 {
 	const IPAddress remoteHost = socket.peerAddress().host();
 
@@ -148,8 +148,18 @@ int RAOPDevice::open(StreamSocket& socket, AudioJackStatus& audioJackStatus)
 		_rtspClient.reset(new RTSPClient(socket, _remoteControlId));
 	}
 
+	int returnCode = 0;
+	if (authRequest) {
+		// send auth message to remote speakers
+		returnCode = _rtspClient->doAuthSetup();
+		if (returnCode != RTSP_STATUS_CODE_OK)
+		{
+			return returnCode;
+		}
+	}
+
 	// send announce message to remote speakers
-	int returnCode = _rtspClient->doAnnounce(
+	returnCode = _rtspClient->doAnnounce(
 		secureDataStream() ? _raopEngine._encodedKey : "",
 		secureDataStream() ? _raopEngine._encodedIV : "");
 	if (returnCode != RTSP_STATUS_CODE_OK)

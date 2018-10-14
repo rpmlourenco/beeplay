@@ -48,7 +48,7 @@ public:
 	~RAOPDevice();
 
 	int test(Poco::Net::StreamSocket&, bool firstTime);
-	int open(Poco::Net::StreamSocket&, AudioJackStatus&);
+	int open(Poco::Net::StreamSocket&, AudioJackStatus&, bool authRequest);
 	bool isOpen(bool pollConnection = true) const;
 	void close();
 	void flush();

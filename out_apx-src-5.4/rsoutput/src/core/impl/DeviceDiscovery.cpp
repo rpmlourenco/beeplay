@@ -419,6 +419,10 @@ DeviceInfo::DeviceType DeviceDiscoveryImpl::determineDeviceType(
 	assert(!txtRecord.has("sv") || txtRecord.test("sv", "true|false"));
 	assert( txtRecord.has("cn") && txtRecord.test("cn", "(0,)?1(,2)?(,3)?"));
 
+	//Debugger::printf("txtRecord.has(\"am\") = %i", txtRecord.has("am"));
+	//Debugger::printf("txtRecord.test(\"am\", \"AirPort.*\") = %i", txtRecord.test("am", "AirPort.*"));
+	//Debugger::printf("txtRecord.has(\"md\") = %i", txtRecord.has("md"));
+
 	// determine device type from remaining properties
 	if (txtRecord.has("rast") || txtRecord.has("rastx")
 		|| txtRecord.has("raver") || txtRecord.has("ramach"))
@@ -556,6 +560,27 @@ DeviceInfo::DeviceType DeviceDiscoveryImpl::determineDeviceType(
 		assert(!txtRecord.has("vv"));
 
 		return DeviceInfo::APX;
+	}
+	else if (txtRecord.has("am") && txtRecord.test("am", "AirPort.*") && txtRecord.has("md"))
+	{
+		// AirPort Express (airplay 2)
+
+		assert(!txtRecord.has("da") || txtRecord.get("da") == "true");
+		assert(!txtRecord.has("ek") || txtRecord.get("ek") == "1");
+		assert(txtRecord.has("et") && txtRecord.test("et", "0(,\\d)+"));
+		//assert(!txtRecord.has("fv") || txtRecord.test("fv", "7\\d{4}\\.\\d+"));
+		assert(!txtRecord.has("sf") || txtRecord.test("sf", "0x\\d"));
+		assert(!txtRecord.has("sm") || txtRecord.get("sm") == "false");
+		assert(txtRecord.has("tp") && txtRecord.get("tp") == "UDP");
+		assert(txtRecord.has("vn") && txtRecord.test("vn", "3|65537"));
+		assert(!txtRecord.has("vs") || txtRecord.test("vs", "\\d{3}\\.\\d{1,2}"));
+
+		//assert(!txtRecord.has("ft"));
+		//assert(!txtRecord.has("md"));
+		//assert(!txtRecord.has("pk"));
+		//assert(!txtRecord.has("vv"));
+
+		return DeviceInfo::AP2;
 	}
 	else if (txtRecord.has("am") && txtRecord.test("am", "AppleTV.*") && !txtRecord.has("ek"))
 	{

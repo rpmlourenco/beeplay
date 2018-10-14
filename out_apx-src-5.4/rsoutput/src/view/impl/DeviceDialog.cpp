@@ -123,6 +123,7 @@ void DeviceDialogImpl::onInitialize()
 	HWND typeList = GetDlgItem(_dialogWindow, DIALOG_DEVICE_INPUT_TYPE);
 	ComboBox_AddItemData(typeList, DeviceInfo::ANY);
 	ComboBox_AddItemData(typeList, DeviceInfo::APX);
+	ComboBox_AddItemData(typeList, DeviceInfo::AP2);
 	ComboBox_AddItemData(typeList, DeviceInfo::ATV);
 
 	if (_device.get() == NULL)
@@ -256,6 +257,10 @@ int DeviceDialogImpl::onDrawItem(LPDRAWITEMSTRUCT drawItemInfo)
 		switch (drawItemInfo->itemData)
 		{
 		case DeviceInfo::APX:
+			iconId = ICON_APX;
+			nameSt = TEXT(LABEL_APX);
+			break;
+		case DeviceInfo::AP2:
 			iconId = ICON_APX;
 			nameSt = TEXT(LABEL_APX);
 			break;
