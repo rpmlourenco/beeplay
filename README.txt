@@ -9,10 +9,16 @@ https://github.com/philippe44/RAOP-Player
 https://github.com/macosforge/alac
 
 
-
 TODO:
-- align progress
-- make raop and wasapi independent
-- fix odd formats
-- align volume control of raop and wasapi
+- activate airplay during play
+- optimise with no raop devices
 - UI similar to iTunes
+- align volume control of raop and wasapi
+- fix odd formats
+- initialization options (do not keep disabled devices)
+- skip breaks sync
+
+Done:
+- align progress, not possible :(
+- compatible with airplay2 ok
+- make raop and wasapi independent

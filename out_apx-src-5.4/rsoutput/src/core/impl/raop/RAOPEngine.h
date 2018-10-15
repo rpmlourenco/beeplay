@@ -178,7 +178,7 @@ private:
 	typedef std::list<class RAOPDevice*> RAOPDeviceList;
 	RAOPDeviceList _raopDevices;
 
-	WASAPIDevice *_wasapiDevice = NULL;
+	WASAPIDevice *_wasapiDevice;
 
 	mutable Poco::FastMutex _mutex;
 	typedef const Poco::FastMutex::ScopedLock ScopedLock;

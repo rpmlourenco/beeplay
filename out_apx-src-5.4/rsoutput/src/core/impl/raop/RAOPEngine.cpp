@@ -216,7 +216,8 @@ RAOPEngine::RAOPEngine(OutputObserver& outputObserver)
 	_controlRequestHandler(*this, &RAOPEngine::handleControlRequest),
 	_timingRequestHandler(*this, &RAOPEngine::handleTimingRequest),
 	_reactorThread("RAOPEngine.SocketReactor::run"),
-	_senderThread("RAOPEngine::run")
+	_senderThread("RAOPEngine::run"),
+	_wasapiDevice(NULL)
 {
 	// seed random number generator
 	Random::seed(static_cast<unsigned int>(std::time(NULL)));
@@ -501,7 +502,19 @@ size_t RAOPEngine::canWrite() const
 {
 	ScopedLock lock(_mutex);
 
-	return (!_raopDevices.empty() && _rtpDataSecured.canWrite() ? RAOP_PACKET_MAX_DATA_SIZE : 0);
+	//Debugger::printf("_raopDevices.empty() = %s", _raopDevices.empty() ? "true" : "false");
+	//Debugger::printf("_rtpDataSecured.canWrite() = %s", _rtpDataSecured.canWrite() ? "true" : "false");
+
+	if (!_raopDevices.empty()) {
+		return (_rtpDataSecured.canWrite() ? RAOP_PACKET_MAX_DATA_SIZE : 0);
+	} 
+	else
+	{
+		return (_rtpDataSecured.canWrite() ? RAOP_PACKET_MAX_DATA_SIZE : 0);
+		//return (_wasapiData.canWrite() ? RAOP_PACKET_MAX_DATA_SIZE : 0);
+	}
+
+	//return (!_raopDevices.empty() && _rtpDataSecured.canWrite() ? RAOP_PACKET_MAX_DATA_SIZE : 0);
 }
 
 
@@ -517,8 +530,8 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 
 	PacketBuffer::Slot& sslotRef = _rtpDataSecured.nextAvailable();
 	PacketBuffer::Slot& uslotRef = _rtpDataUnsecured.nextAvailable();
-	WASAPIBuffer::Slot& wslotRef = _wasapiData.nextAvailable();
-	sslotRef.originalSize = uslotRef.originalSize = wslotRef.originalSize = length;
+	size_t originalSize = length;
+	sslotRef.originalSize = uslotRef.originalSize = originalSize;
 
 	DataPacketHeader packetHeader;
 	packetHeader.setMarker(_isFirstDataPacket);
@@ -546,12 +559,19 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 		length = RAOP_PACKET_MAX_DATA_SIZE;
 	}
 
-	// fill in wasapi data converting from 16-bit PCM to 32-bit float
-	// convert from 16-bit to 32-bit float
-	// convert size is half (>> 1) because buffer byte_t (8-bit) has been cast to short (16-bit)
-	src_short_to_float_array((short*)buffer, (float*)wslotRef.packetData, length >> 1);
-	// packet size is double (<< 1) because it has been converted from 16-bit to 32-bit
-	wslotRef.payloadSize = wslotRef.packetSize = length << 1;
+	if (_wasapiDevice != NULL) {
+
+		WASAPIBuffer::Slot& wslotRef = _wasapiData.nextAvailable();
+		wslotRef.originalSize = originalSize;
+
+		// fill in wasapi data converting from 16-bit PCM to 32-bit float
+		// convert from 16-bit to 32-bit float
+		// convert size is half (>> 1) because buffer byte_t (8-bit) has been cast to short (16-bit)
+		src_short_to_float_array((short*)buffer, (float*)wslotRef.packetData, length >> 1);
+		// packet size is double (<< 1) because it has been converted from 16-bit to 32-bit
+		wslotRef.payloadSize = wslotRef.packetSize = length << 1;
+
+	}
 
 	// fill in unsecured packet payload with encoded audio data
 	int32_t dataLength = length;
@@ -563,6 +583,7 @@ void RAOPEngine::write(const byte_t* buffer, size_t length)
 	const size_t frameSize = (RAOP_CHANNEL_COUNT * (RAOP_BITS_PER_SAMPLE / 8));
 	assert((length / frameSize) <= std::numeric_limits<uint16_t>::max());
 	sslotRef.frameCount = uslotRef.frameCount = uint16_t(length / frameSize);
+	
 
 	// make copy of initialization vector because it gets modified
 	buffer_t iv(_aesIV);
@@ -739,13 +760,13 @@ void RAOPEngine::run()
 			Timestamp currentTime;
 
 			// send sync packet at start of stream and periodically afterwards
-			if (_isFirstSyncPacket || (currentTime - _lastStreamSyncTime) >= 1000000L)
+			if (!_raopDevices.empty() && (_isFirstSyncPacket || (currentTime - _lastStreamSyncTime) >= 1000000L))
 			{				
 				sendSyncPacket(currentTime);
 			}
 
 			// send data packet whenever system time meets or exceeds stream time
-			if (!_raopDevices.empty() && _rtpSeqNumIncoming != _rtpSeqNumOutgoing
+			if (_rtpSeqNumIncoming != _rtpSeqNumOutgoing
 				&& (currentTime - _firstDataTime) >= samplesToMicroseconds(_samplesWritten))
 			{
 				const size_t dataLength = sendDataPacket(currentTime);
@@ -857,8 +878,14 @@ size_t RAOPEngine::sendDataPacket(const Timestamp& currentTime)
 		//_wasapiStarter->start(callback);
 		//Debugger::printf("Scheduled wasapi start with latency = %i", _latency);		
 
-		//schedule wasapi to start at ntptime of first data packet + 2000 ms (ApEx latency) - latency of Wasapi device - 1.8ms for timer delay
-		long latency = 2000000L - _wasapiDevice->audioLatency() - 1800L;
+		long latency = 0L;
+		if (!_raopDevices.empty()) {
+			//schedule wasapi to start at ntptime of first data packet + 2000 ms (ApEx latency) - latency of Wasapi device - 1.8ms for timer delay
+			latency = 2000000L - _wasapiDevice->audioLatency() - 1800L;
+		}
+		else {
+			latency = _wasapiDevice->audioLatency()*20;
+		}
 		Poco::Util::TimerTask::Ptr timerTask = new WASAPITimerTask(_wasapiDevice);
 		_wasapiStarter = new Poco::Util::Timer();
 		_wasapiStarter->schedule(timerTask, currentTime + Poco::Timespan(0L, latency));
